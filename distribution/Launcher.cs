@@ -6,7 +6,7 @@ using System.Reflection;
 [assembly: AssemblyTitle("Radar de Leilões")]
 [assembly: AssemblyDescription("Acompanhamento de imóveis em leilão")]
 [assembly: AssemblyProduct("Radar de Leilões")]
-[assembly: AssemblyVersion("0.7.0.0")]
+[assembly: AssemblyVersion("0.8.0.0")]
 internal static class Launcher {
     [STAThread] private static void Main() {
         string folder=AppDomain.CurrentDomain.BaseDirectory;

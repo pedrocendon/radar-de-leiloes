@@ -115,7 +115,7 @@ function enableLocations(){
 }
 
 const $=id=>document.getElementById(id), E=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pages=['imoveis','favoritos','preferencias','fontes','ajuda'];
+const pages=['imoveis','favoritos','preferencias','fontes','ajuda','atualizacoes'];
 let fragment=location.hash.slice(1),token=sessionStorage.getItem('radar-token');
 if(fragment&&!pages.includes(fragment)){token=fragment;sessionStorage.setItem('radar-token',token);history.replaceState(null,'',location.pathname);}
 const pendingFavorites=new Set();
@@ -209,7 +209,7 @@ async function refresh(){
  if(stopped)return;
  try{
   const version=++refreshVersion,data=await api('state');if(version!==refreshVersion)return;
-  state=data;$('connection').hidden=true;
+  state=data;$('connection').hidden=true;renderUpdates();
   if(!initialized){fillFilters(state.filters);$('schedule-form').elements.hours.value=state.schedule.hours;$('schedule-form').elements.enabled.checked=state.schedule.enabled;initialized=true;}
   const signature=JSON.stringify([state.listings,state.filters]);if(signature!==listingSignature){listingSignature=signature;const current=$('city').value;$('city').innerHTML='<option value="">Todas as cidades</option>'+state.cities.map(c=>`<option value="${E(c)}">${E(c)}</option>`).join('');$('city').value=current;renderCards();renderFavorites();syncFavoriteButtons();}
   const sources=JSON.stringify(state.sources);if(sources!==sourceSignature){sourceSignature=sources;renderSources();}
@@ -222,8 +222,27 @@ async function refresh(){
   $('job').hidden=!state.job.started;$('job').classList.toggle('working',state.job.busy);$('job').classList.toggle('error',state.job.error);$('job-text').textContent=state.job.message;
   $('elapsed').textContent=state.job.busy?'Pode levar alguns minutos.':'';
   $('schedule-info').textContent=state.schedule.enabled?'Ativada. Próxima busca: '+new Date(state.schedule.next_run*1000).toLocaleString('pt-BR'):'Desativada. As buscas acontecem quando você clicar em Buscar novidades.';
- }catch(e){$('connection').textContent='Não foi possível falar com o programa. Dê dois cliques em ABRIR RADAR.vbs para reabrir. '+e.message;$('connection').hidden=false;}
+ }catch(e){$('connection').textContent=state?.updates?.status==='installing'?'O Radar está instalando a nova versão e abrirá novamente em instantes.':'Não foi possível falar com o programa. Dê dois cliques em ABRIR RADAR.vbs para reabrir. '+e.message;$('connection').hidden=false;}
 }
+
+function renderUpdates(){
+ const u=state.updates;if(!u)return;
+ const working=['checking','downloading','installing'].includes(u.status);
+ $('update-version').textContent='Versão instalada: '+u.current_version;
+ $('update-message').textContent=u.message+(u.status==='downloading'?' '+u.percent+'%':'');
+ $('update-last-check').textContent=u.checked_at?'Última verificação concluída: '+new Date(u.checked_at*1000).toLocaleString('pt-BR'):'';
+ $('update-check').disabled=!u.supported||working||state.job.busy;
+ $('update-install').hidden=u.status!=='available';$('update-install').disabled=state.job.busy;
+ $('update-install').textContent='Atualizar para '+(u.latest_version||'')+' e reiniciar';
+ $('update-automatic').checked=!!u.automatic;$('update-automatic').disabled=!u.supported||working||state.job.busy;
+ $('update-progress').hidden=u.status!=='downloading';$('update-progress').value=u.percent||0;
+ $('update-release').hidden=!u.notes;$('update-notes').textContent=u.notes||'';
+ $('update-banner').hidden=u.status!=='available';$('update-banner-text').textContent='A versão '+u.latest_version+' do Radar está disponível.';
+ $('update-receipt').hidden=!u.last_install;$('update-receipt').textContent=u.last_install||'';
+}
+$('update-check').onclick=()=>act('update_check',{});
+$('update-automatic').onchange=e=>act('update_settings',{automatic:e.target.checked},'Preferência de atualização salva.');
+$('update-install').onclick=()=>{if(confirm('Atualizar o Radar agora? Seus dados serão copiados para segurança. O programa fechará e abrirá novamente ao concluir.'))act('update_install',{});};
 document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.go)));
 document.querySelector('.brand').addEventListener('click',e=>{e.preventDefault();page('imoveis');});

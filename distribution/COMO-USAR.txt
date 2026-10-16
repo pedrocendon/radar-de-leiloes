@@ -91,3 +91,8 @@ Se a janela mostrar um erro, use Tentar novamente. Se pedir o WebView2,
 conecte-se à internet, encerre pelo menu Opções e reinstale o Radar.
 Os registros de erro ficam em %LOCALAPPDATA%\RadarLeiloes\data.
 Nenhuma senha de leiloeiro ou conta de serviço é necessária para usar o Radar.
+
+ATUALIZAR O RADAR
+Abra a seção Atualizações. O Radar avisa automaticamente quando houver uma nova versão. Clique em Atualizar e reiniciar e confirme. Ele baixa, confere o arquivo, faz uma cópia de segurança dos dados e instala. Aguarde terminar; o programa abrirá novamente.
+Para quem usa 0.7 ou anterior, é preciso instalar a 0.8 uma única vez para ativar esse recurso. Os anúncios e favoritos são mantidos.
+Se a internet falhar, tente novamente depois. O programa continua disponível. A cópia de segurança fica na pasta updates dos seus dados em %LOCALAPPDATA%\RadarLeiloes.

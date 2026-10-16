@@ -2,10 +2,24 @@
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Radar de Leilões</title><link rel="stylesheet" href="/style.css"><script src="/ui.js" defer></script></head>
 <body>
 <header><a class="brand" href="#imoveis"><span class="brand-icon" aria-hidden="true">R</span><span>Radar de Leilões<small>Seu acompanhamento de imóveis</small></span></a><div class="header-actions"><span class="local">Neste computador</span><button id="close-app" class="quiet">Encerrar programa</button></div></header>
-<div class="layout"><nav aria-label="Menu principal"><button data-page="imoveis" class="nav active" aria-current="page">Imóveis acompanhados</button><button data-page="favoritos" class="nav">Favoritos <span id="favorite-nav-count" class="nav-count">0</span></button><button data-page="preferencias" class="nav">Minha busca</button><button data-page="fontes" class="nav">Sites consultados</button><button data-page="ajuda" class="nav">Como usar</button><div class="nav-note">Os anúncios ficam salvos mesmo quando um site não responde.</div></nav>
+<div class="layout"><nav aria-label="Menu principal"><button data-page="imoveis" class="nav active" aria-current="page">Imóveis acompanhados</button><button data-page="favoritos" class="nav">Favoritos <span id="favorite-nav-count" class="nav-count">0</span></button><button data-page="preferencias" class="nav">Minha busca</button><button data-page="fontes" class="nav">Sites consultados</button><button data-page="atualizacoes" class="nav">Atualizações</button><button data-page="ajuda" class="nav">Como usar</button><div class="nav-note">Os anúncios ficam salvos mesmo quando um site não responde.</div></nav>
 <main>
+<div id="update-banner" class="notice" hidden><span id="update-banner-text"></span> <button class="secondary" data-go="atualizacoes">Ver atualização</button></div>
 <div id="connection" class="notice error" role="alert" hidden></div>
 <div id="job" class="notice" role="status" aria-live="polite" hidden><span id="job-text"></span><span id="elapsed"></span></div>
+<section id="atualizacoes" class="page" hidden>
+<div class="eyebrow">SEMPRE EM DIA</div><h1>Atualizações do Radar</h1>
+<p>Receba as novas versões por aqui. Seus anúncios, favoritos e preferências são mantidos.</p>
+<div class="panel"><h2 id="update-version">Sua versão do Radar</h2>
+<p id="update-message" role="status" aria-live="polite">Consultando…</p>
+<p id="update-last-check" class="hint"></p>
+<progress id="update-progress" max="100" value="0" aria-label="Download da nova versão" hidden></progress>
+<div class="button-row"><button id="update-check" class="secondary">Verificar agora</button><button id="update-install" class="primary" hidden>Atualizar e reiniciar</button></div>
+<label class="check"><input id="update-automatic" type="checkbox">Avisar automaticamente quando houver uma nova versão</label>
+<p class="hint">A verificação acontece ao abrir e uma vez por dia enquanto o Radar estiver aberto. A instalação começa quando você clicar em Atualizar e reiniciar. Aguarde as buscas terminarem e salve trabalhos abertos antes de atualizar.</p>
+<p id="update-receipt" class="hint" hidden></p></div>
+<details id="update-release" class="panel" hidden><summary>O que mudou nesta versão</summary><pre id="update-notes" class="release-notes"></pre></details>
+</section>
 <section id="imoveis" class="page">
 <div class="title-row"><div><div class="eyebrow">SEU RADAR</div><h1>Imóveis acompanhados</h1><p id="last-check">Carregando seus dados…</p></div><button id="search-now" class="primary large" data-mutation>Buscar novidades</button></div>
 <div class="welcome"><div><strong>Comece por aqui</strong><p>Veja os imóveis salvos abaixo. Para procurar novidades nos sites, clique em <b>Buscar novidades</b>.</p></div><button id="go-preferences" class="secondary">Escolher o que buscar</button></div>

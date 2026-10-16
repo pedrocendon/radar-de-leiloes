@@ -17,6 +17,9 @@ APP=Path(__file__).resolve().parent
 class TrayCompanion:
     def __init__(self,server,show=True):
         self.server=server
+        from updater import Updater
+        server.service.updater=Updater(server.service,APP.parent,server.shutdown)
+        threading.Thread(target=server.service.updater.agenda,daemon=True).start()
         self.session=server.service.base/'data/sessao-interface.json'
         self.process=self.spawn(show)
         self.watcher=threading.Thread(target=self.watch,daemon=True)

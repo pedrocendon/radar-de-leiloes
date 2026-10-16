@@ -28,8 +28,12 @@ $radarRoot = (Get-Location).Path
 & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' "/DPayload=$radarRoot\work\installer-build\payload" "/DOutput=$radarRoot\dist" "/DIcon=$radarRoot\work\installer-build\payload\radar.ico" "/DBootstrapper=$radarRoot\work\installer-downloads\MicrosoftEdgeWebview2Setup.exe" distribution/radar.iss
 ```
 
-Ajuste somente o caminho do Inno Setup se estiver instalado em outro local. O resultado é `dist/Instalar-Radar-de-Leiloes-0.7-Windows.exe`.
+Ajuste somente o caminho do Inno Setup se estiver instalado em outro local. O resultado é `dist/Instalar-Radar-de-Leiloes-0.8-Windows.exe`.
 
 O instalador inclui Python, o gerador Excel e a janela própria. Usa uma configuração inicial vazia e oferece um atalho na área de trabalho. Quando necessário, instala o WebView2 pela distribuição oficial da Microsoft, com acesso à internet. Os dados do usuário ficam em `%LOCALAPPDATA%\RadarLeiloes`.
 
 Antes de distribuir uma nova compilação, teste instalar, abrir, salvar uma busca, favoritar um anúncio, exportar Excel, encerrar pelo ícone perto do relógio e reinstalar preservando os dados. O executável não possui assinatura digital do desenvolvedor.
+
+## Publicação e atualização
+
+Siga [o procedimento de publicação](ATUALIZACOES.md) para que o programa reconheça a nova versão. O pacote inclui RadarUpdate.exe, auxiliar que aguarda o fechamento do Radar e instala a versão verificada.

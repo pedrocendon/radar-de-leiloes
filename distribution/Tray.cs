@@ -22,6 +22,8 @@ internal sealed class RadarTray : ApplicationContext {
     readonly ToolStripMenuItem search = new ToolStripMenuItem("Buscar novidades agora");
     readonly ToolStripMenuItem schedule = new ToolStripMenuItem("Ativar buscas automáticas");
     readonly ToolStripMenuItem exit = new ToolStripMenuItem("Encerrar o Radar");
+    readonly ToolStripMenuItem updates = new ToolStripMenuItem("Verificar nova versão do Radar");
+    string notifiedVersion;
     readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
     readonly JavaScriptSerializer json = new JavaScriptSerializer();
     readonly Dictionary<string,Icon> icons = new Dictionary<string,Icon>();
@@ -51,7 +53,9 @@ internal sealed class RadarTray : ApplicationContext {
         icons.Add("idle",Badge(Color.Gray)); icons.Add("scheduled",Badge(Color.SeaGreen));
         icons.Add("busy",Badge(Color.DodgerBlue)); icons.Add("error",Badge(Color.DarkOrange));
         status.Enabled=false; next.Enabled=false;search.Enabled=false;schedule.Enabled=false;exit.Enabled=false;
-        menu.Items.AddRange(new ToolStripItem[]{status,next,new ToolStripSeparator(),open,activity,search,schedule,new ToolStripSeparator(),exit});
+        menu.Items.AddRange(new ToolStripItem[]{status,next,new ToolStripSeparator(),open,activity,search,schedule,updates,new ToolStripSeparator(),exit});
+        updates.Click+=async(s,e)=>{OpenRadar();await Change("update_check",new Dictionary<string,object>());};
+        tray.BalloonTipClicked+=(s,e)=>OpenRadar();
         activity.Click+=(s,e)=>ShowActivity();
         open.Click+=(s,e)=>OpenRadar(); tray.DoubleClick+=(s,e)=>OpenRadar();
         search.Click+=async(s,e)=>await Change("search",new Dictionary<string,object>());
@@ -143,13 +147,22 @@ internal sealed class RadarTray : ApplicationContext {
             bool busy=Convert.ToBoolean(job["busy"]),failed=Convert.ToBoolean(job["error"]);
             enabled=Convert.ToBoolean(plan["enabled"]);hours=Convert.ToInt32(plan["hours"]);connected=true;
             string label=busy?(Convert.ToString(job["kind"])=="search"?"Buscando imóveis…":"Atualizando a planilha…"):failed?"Última atualização com erro":enabled?"Buscas automáticas ativadas":"Aberto • buscas automáticas desativadas";
+            if(busy && Convert.ToString(job["kind"])=="software")label="Atualizando o programa…";
+            if(state.ContainsKey("updates")) {
+                var update=(Dictionary<string,object>)state["updates"];
+                string available=Convert.ToString(update.ContainsKey("latest_version")?update["latest_version"]:null);
+                if(Convert.ToString(update["status"])=="available" && available!=notifiedVersion) {
+                    notifiedVersion=available;
+                    tray.ShowBalloonTip(9000,"Nova versão do Radar", "A versão "+available+" está disponível. Abra o Radar e escolha Atualizações para instalar.",ToolTipIcon.Info);
+                }
+            }
             status.Text=label;
             next.Text=busy?"Aguarde a conclusão da atualização":enabled&&plan["next_run"]!=null?"Próxima busca: "+new DateTime(1970,1,1,0,0,0,DateTimeKind.Utc).AddSeconds(Convert.ToDouble(plan["next_run"])).ToLocalTime().ToString("dd/MM HH:mm"):"Use Buscar novidades agora para consultar";
             tray.Icon=icons[busy?"busy":failed?"error":enabled?"scheduled":"idle"];
             string tip=busy?"Radar — "+label:enabled?"Radar — "+next.Text:failed?"Radar — última atualização com erro":"Radar aberto — buscas automáticas desativadas";
             tray.Text=tip.Length>63?tip.Substring(0,63):tip;
             schedule.Text=enabled?"Pausar buscas automáticas":"Ativar buscas automáticas ("+hours+" h)";
-            open.Enabled=true;search.Enabled=schedule.Enabled=exit.Enabled=!busy;
+            open.Enabled=true;search.Enabled=schedule.Enabled=exit.Enabled=updates.Enabled=!busy;
             UpdateActivity();
         } catch {
             if(disposed)return;

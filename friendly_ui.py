@@ -98,6 +98,12 @@ class Service:
         self.schedule=load(pref) if pref.exists() else {'enabled':False,'hours':24}
         self.next_run=time.time()+self.schedule['hours']*3600 if self.schedule.get('enabled') else None
         self.closed=threading.Event()
+        self.updater=None
+
+    def update_state(self):
+        from version import VERSION
+        return self.updater.state() if self.updater else dict(supported=False,current_version=VERSION,
+            status='unsupported',message='A atualização pelo programa está disponível na versão instalada para Windows.')
 
     def note(self,message):
         with self.guard:self.job['message']=message
@@ -150,13 +156,19 @@ class Service:
             if r['city']:cities.setdefault(norm(r['city']),r['city'])
         return dict(today=now()[:10],listings=listing,sources=sources,filters=config['filters'],suggested=config['suggested_filters'],
                     cities=sorted(cities.values()),
-                    job=job,schedule=schedule,excel=self.excel_state(),last_attempt=max((r['last_attempt'] or '' for r in rows),default=None))
+                    job=job,schedule=schedule,updates=self.update_state(),excel=self.excel_state(),last_attempt=max((r['last_attempt'] or '' for r in rows),default=None))
 
     def mutate(self,action,payload):
         # Serialize starts/settings/imports. Workers read their configuration after save.
         with self.guard:
+            if self.job['busy'] and self.job['kind']=='software':raise ValueError('Aguarde a atualização do Radar terminar antes de alterar os dados.')
             if self.job['busy'] and action not in ('open_excel','favorite'):raise ValueError('A atualização está em andamento. Aguarde antes de alterar as opções.')
-            if action=='favorite':
+            if action in ('update_check','update_install','update_settings'):
+                if not self.updater:raise ValueError('Use a versão instalada do Radar para atualizar pelo programa.')
+                if action=='update_check':self.updater.check()
+                elif action=='update_install':self.updater.install()
+                else:self.updater.configure(payload)
+            elif action=='favorite':
                 listing_id=payload.get('id');enabled=payload.get('favorite')
                 if not isinstance(listing_id,str) or not listing_id or type(enabled) is not bool:
                     raise ValueError('Escolha um anúncio e informe se deseja favoritar ou remover dos favoritos.')
@@ -241,7 +253,7 @@ def make_server(base,port=0):
                 if route=='/api/state':return self.respond(200,service.state())
                 if route=='/api/background':
                     with service.guard:
-                        return self.respond(200,dict(job=dict(service.job),schedule=dict(service.schedule,next_run=service.next_run)))
+                        return self.respond(200,dict(job=dict(service.job),schedule=dict(service.schedule,next_run=service.next_run),updates=service.update_state()))
                 if route=='/api/health':return self.respond(200,{'ok':True,'base':str(service.base)})
                 if route=='/api/excel':
                     from xlsx_export import REPORT_NAME

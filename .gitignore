@@ -3,6 +3,7 @@
 /references.json
 /data/
 /exports/
+/updates/
 /janela-webview/
 *.sqlite*
 *.db

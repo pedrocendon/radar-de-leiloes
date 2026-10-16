@@ -1,15 +1,15 @@
 ; Compile with /DPayload=... /DOutput=... /DIcon=...
 [Setup]
 #ifdef ValidationBuild
-AppId=RadarLeiloes.Validation07
-AppMutex=Local\RadarLeiloes.Validation07
+AppId=RadarLeiloes.Validation08
+AppMutex=Local\RadarLeiloes.Validation08
 #else
 AppId={{18D20C6C-E502-45E9-B94B-8415C91D369D}
 AppMutex=Local\RadarLeiloes.Desktop
 #endif
 AppName=Radar de Leilões
-AppVersion=0.7.0
-AppVerName=Radar de Leilões 0.7
+AppVersion=0.8.0
+AppVerName=Radar de Leilões 0.8
 DefaultDirName={localappdata}\Programs\RadarLeiloes
 DefaultGroupName=Radar de Leilões
 DisableProgramGroupPage=yes
@@ -17,7 +17,7 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 OutputDir={#Output}
-OutputBaseFilename=Instalar-Radar-de-Leiloes-0.7-Windows
+OutputBaseFilename=Instalar-Radar-de-Leiloes-0.8-Windows
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -26,7 +26,7 @@ UninstallDisplayIcon={app}\Radar.exe
 CloseApplications=yes
 RestartApplications=no
 UninstallDisplayName=Radar de Leilões
-VersionInfoVersion=0.7.0.0
+VersionInfoVersion=0.8.0.0
 VersionInfoDescription=Instalador do Radar de Leilões
 WizardSizePercent=110
 DisableWelcomePage=no

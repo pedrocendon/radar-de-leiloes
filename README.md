@@ -1,24 +1,26 @@
 # Radar de Leilões
 
-Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.7**.
+Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8**.
 
 ## Baixar e instalar no Windows
 
-**[Baixar instalador do Radar 0.7 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.7.0/Instalar-Radar-de-Leiloes-0.7-Windows.exe)**
+**[Baixar instalador do Radar 0.8 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.0/Instalar-Radar-de-Leiloes-0.8-Windows.exe)**
 
 Compatível com **Windows 10 e 11 de 64 bits**. Abra o arquivo baixado, siga o assistente e mantenha marcada a opção de criar o ícone na área de trabalho. Não é necessário instalar Python, Node.js ou Codex.
 
 Se já usa o Radar, encerre-o pelo ícone perto do relógio antes de atualizar. Os dados locais são mantidos. Internet é necessária para as consultas e para instalar o Microsoft WebView2 quando ele ainda não estiver disponível.
 
-[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.7.0). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
+[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.8.0). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
 
 ## Para quem usa o programa
 
 O instalador abre o Radar em uma janela própria, cria o atalho na área de trabalho e mantém um ícone perto do relógio. A seção **Minha busca** configura os filtros; **Favoritos** reúne os anúncios selecionados. A planilha Excel é atualizada ao concluir uma busca.
 
-Consulte o [guia de uso](docs/COMO-USAR.txt). Ao atualizar, encerre o Radar antes de executar o novo instalador. A instalação mantém os dados locais.
+Consulte o [guia de uso](docs/COMO-USAR.txt). Na versão 0.8, use **Atualizações → Atualizar e reiniciar** para receber as próximas versões pelo programa. Quem usa a versão 0.7 ou anterior precisa instalar a 0.8 uma única vez. [Como funciona a atualização](docs/ATUALIZACOES.md).
 
 ## Recursos
+
+- Aviso automático de novas versões, download pelo programa, cópia de segurança e instalação com reinício do Radar.
 
 - Busca manual e repetição a cada 1, 6, 12 ou 24 horas enquanto o programa estiver aberto.
 - Filtros de cidade, UF, tipo, preço, desconto e data; valores em reais e sugestões de cidades e estados.
@@ -93,7 +95,7 @@ Na instalação Windows, os dados ficam em `%LOCALAPPDATA%\RadarLeiloes`. No des
 
 ## Segurança
 
-Consulte a [revisão de segurança](docs/SEGURANCA-2026-10-16.md) e as [orientações de segurança](SECURITY.md). O instalador 0.7 foi examinado pelo Microsoft Defender sem ameaças detectadas. Ele ainda não possui assinatura digital do desenvolvedor. A revisão tem escopo limitado e não garante ausência de vulnerabilidades.
+Consulte a [revisão de segurança](docs/SEGURANCA-2026-10-16.md) e as [orientações de segurança](SECURITY.md). O instalador 0.8 foi examinado pelo Microsoft Defender sem ameaças detectadas. Ele ainda não possui assinatura digital do desenvolvedor. A revisão tem escopo limitado e não garante ausência de vulnerabilidades.
 
 ## Dependências e licenciamento
 

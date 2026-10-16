@@ -35,7 +35,7 @@ with zipfile.ZipFile(DOWNLOAD/'webview2.nupkg') as archive:
     (PAYLOAD/'WebView2Loader.dll').write_bytes(archive.read('runtimes/win-x64/native/WebView2Loader.dll'))
     (PAYLOAD/'licenses/WebView2.txt').write_bytes(archive.read('LICENSE.txt'))
 (PAYLOAD/'runtime/python313._pth').write_text('python313.zip\n.\n../app\nLib/site-packages\n',encoding='utf-8')
-for name in ['app.py','collectors.py','engine.py','friendly_ui.py','xlsx_export.py','portable_excel.py']:
+for name in ['app.py','collectors.py','engine.py','friendly_ui.py','xlsx_export.py','portable_excel.py','updater.py','version.py']:
     shutil.copy2(SOURCE/name,PAYLOAD/'app'/name)
 shutil.copy2(DIST/'desktop.py',PAYLOAD/'app/desktop.py')
 for name in ['ui.js','index.html','style.css']:
@@ -77,6 +77,7 @@ image.save(PAYLOAD/'radar.ico',sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(1
 csc=Path('C:/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe')
 subprocess.run([str(csc),'/nologo','/target:winexe','/platform:anycpu','/optimize+',f'/win32icon:{PAYLOAD / "radar.ico"}',f'/out:{PAYLOAD / "Radar.exe"}','/reference:System.Windows.Forms.dll',str(DIST/'Launcher.cs')],check=True)
 subprocess.run([str(csc),'/nologo','/target:winexe','/platform:x64','/optimize+',f'/win32icon:{PAYLOAD / "radar.ico"}',f'/out:{PAYLOAD / "RadarTray.exe"}','/reference:System.Windows.Forms.dll','/reference:System.Drawing.dll','/reference:System.Web.Extensions.dll',f'/reference:{PAYLOAD / "Microsoft.Web.WebView2.Core.dll"}',f'/reference:{PAYLOAD / "Microsoft.Web.WebView2.WinForms.dll"}',str(DIST/'Tray.cs'),str(DIST/'RadarWindow.cs')],check=True)
+subprocess.run([str(csc),'/nologo','/target:winexe','/platform:x64','/optimize+',f'/win32icon:{PAYLOAD / "radar.ico"}',f'/out:{PAYLOAD / "RadarUpdate.exe"}','/reference:System.Windows.Forms.dll','/reference:System.Web.Extensions.dll',str(DIST/'Updater.cs')],check=True)
 manifest={str(p.relative_to(PAYLOAD)):hashlib.sha256(p.read_bytes()).hexdigest() for p in PAYLOAD.rglob('*') if p.is_file()}
 (BUILD/'payload-manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 print(json.dumps({'files':len(manifest),'payload':str(PAYLOAD),'bytes':sum(p.stat().st_size for p in PAYLOAD.rglob('*') if p.is_file())}))
