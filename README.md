@@ -1,16 +1,16 @@
 # Radar de Leilões
 
-Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8.3**.
+Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8.4**.
 
 ## Baixar e instalar no Windows
 
-**[Baixar instalador do Radar 0.8.3 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.3/Instalar-Radar-de-Leiloes-0.8.3-Windows.exe)**
+**[Baixar instalador do Radar 0.8.4 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.4/Instalar-Radar-de-Leiloes-0.8.4-Windows.exe)**
 
 Compatível com **Windows 10 e 11 de 64 bits**. Abra o arquivo baixado, siga o assistente e mantenha marcada a opção de criar o ícone na área de trabalho. Não é necessário instalar Python, Node.js ou Codex.
 
 Se já usa o Radar, encerre-o pelo ícone perto do relógio antes de atualizar. Os dados locais são mantidos. Internet é necessária para as consultas e para instalar o Microsoft WebView2 quando ele ainda não estiver disponível.
 
-[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.8.3). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
+[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.8.4). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
 
 ## Para quem usa o programa
 
@@ -19,6 +19,8 @@ O instalador abre o Radar em uma janela própria, cria o atalho na área de trab
 Consulte o [guia de uso](docs/COMO-USAR.txt). Na versão 0.8, use **Atualizações → Atualizar e reiniciar** para receber as próximas versões pelo programa. Quem usa a versão 0.7 ou anterior precisa instalar a 0.8 uma única vez. [Como funciona a atualização](docs/ATUALIZACOES.md).
 
 ## Recursos
+
+- Avisos quando a data ou o horário de um favorito muda e quando o leilão é identificado como suspenso ou cancelado.
 
 - Avisos de queda de preço dos favoritos e lembretes de leilão com antecedência de 1, 3 ou 7 dias.
 

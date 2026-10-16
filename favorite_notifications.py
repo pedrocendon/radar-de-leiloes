@@ -57,18 +57,26 @@ class FavoriteNotifications:
         with store.connect() as db:
             db.executescript('''
                 CREATE TABLE IF NOT EXISTS favorite_notice_settings(id INTEGER PRIMARY KEY, price INTEGER NOT NULL, dates INTEGER NOT NULL, days INTEGER NOT NULL);
-                INSERT OR IGNORE INTO favorite_notice_settings VALUES(1,1,1,3);
+                INSERT OR IGNORE INTO favorite_notice_settings(id,price,dates,days) VALUES(1,1,1,3);
                 CREATE TABLE IF NOT EXISTS favorite_price_baselines(listing TEXT, stage TEXT, value REAL, PRIMARY KEY(listing,stage));
                 CREATE TABLE IF NOT EXISTS favorite_date_notices(property TEXT, stage TEXT, PRIMARY KEY(property,stage));
             ''')
 
+            columns = {r['name'] for r in db.execute('PRAGMA table_info(favorite_notice_settings)')}
+            for name in ('date_changes', 'status_changes'):
+                if name not in columns:
+                    db.execute(f'ALTER TABLE favorite_notice_settings ADD COLUMN {name} INTEGER NOT NULL DEFAULT 1')
+        from favorite_changes import FavoriteChanges
+        self.changes = FavoriteChanges(store)
+
     def settings(self):
         with self.store.connect() as db:
             row = db.execute('SELECT * FROM favorite_notice_settings WHERE id=1').fetchone()
-            return dict(price=bool(row['price']), dates=bool(row['dates']), days=row['days'])
+            return dict(price=bool(row['price']), dates=bool(row['dates']), days=row['days'], date_changes=bool(row['date_changes']), status_changes=bool(row['status_changes']))
 
     def sync(self, reset=False):
         """Baseline at migration/favoriting, never invent a historical price reduction."""
+        self.changes.sync()
         with self.store.connect() as db:
             if reset:
                 db.execute('DELETE FROM favorite_price_baselines')
@@ -83,20 +91,27 @@ class FavoriteNotifications:
                                    (row['id'], key, price(stage.get('minimum_bid'))))
 
     def configure(self, payload):
-        if (type(payload.get('price')) is not bool or type(payload.get('dates')) is not bool
+        previous = self.settings()
+        payload = dict(previous, **payload)
+        if (any(type(payload.get(k)) is not bool for k in ('date_changes','status_changes'))
+                or type(payload.get('price')) is not bool or type(payload.get('dates')) is not bool
                 or type(payload.get('days')) is not int or payload['days'] not in (1, 3, 7)):
             raise ValueError('Escolha os avisos dos favoritos e uma antecedência de 1, 3 ou 7 dias.')
-        previous = self.settings()
         if previous['price'] != payload['price']:
             self.sync(reset=True)
+        reset = []
+        if previous['date_changes'] != payload['date_changes']:reset.append('dates')
+        if previous['status_changes'] != payload['status_changes']:reset.extend(['status','raw_status'])
+        if reset:self.changes.sync(reset=reset)
         with self.store.connect() as db:
-            db.execute('UPDATE favorite_notice_settings SET price=?,dates=?,days=? WHERE id=1',
-                       (int(payload['price']), int(payload['dates']), payload['days']))
-            for kind, enabled in [('favorite_price', payload['price']), ('favorite_date', payload['dates'])]:
+            db.execute('UPDATE favorite_notice_settings SET price=?,dates=?,days=?,date_changes=?,status_changes=? WHERE id=1',
+                       (int(payload['price']), int(payload['dates']), payload['days'], int(payload['date_changes']), int(payload['status_changes'])))
+            for kind, enabled in [('favorite_price', payload['price']), ('favorite_date', payload['dates']), ('favorite_rescheduled', payload['date_changes']), ('favorite_status', payload['status_changes'])]:
                 if not enabled:
                     db.execute('UPDATE notification_events SET dispatched=1 WHERE kind=?', (kind,))
 
     def capture(self, config, dates_only=False):
+        changes = 0 if dates_only else self.changes.capture(config)
         current = clock()
         enabled_sources = {s['id'] for s in config['sources'] if s.get('enabled', True)}
         grouped = {'favorite_price': {}, 'favorite_date': {}}
@@ -141,7 +156,7 @@ class FavoriteNotifications:
                 if items:
                     db.execute('INSERT INTO notification_events(at,kind,data) VALUES(?,?,?)',
                                (now(), kind, dump(dict(items=list(items.values())))))
-        return sum(len(items) for items in grouped.values())
+        return changes + sum(len(items) for items in grouped.values())
 
     def _item(self, group, row, stage, previous=None, value=None, days=None, reminder_key=None):
         key = (row['property_id'], reminder_key) if reminder_key else (row['property_id'], stage['number'], stage.get('date'), previous, value)
@@ -159,6 +174,8 @@ class FavoriteNotifications:
         item['listings'].append(dict(id=row['id'], url=row['url'], source=row['source']))
 
     def claim(self, config=None):
+        change = self.changes.claim(config)
+        if change:return change
         current = clock()
         rows_by_id = {r['id']: r for r in self.store.rows()}
         sources = None if config is None else {s['id'] for s in config['sources'] if s.get('enabled', True)}

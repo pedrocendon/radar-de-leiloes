@@ -42,7 +42,7 @@ class ServerTests(unittest.TestCase):
         req=urllib.request.Request(self.url+path,headers=headers,data=None if payload is None else json.dumps(payload).encode())
         with urllib.request.urlopen(req,timeout=5) as r:return json.load(r)
     def test_favorite_notification_preferences_roundtrip(self):
-        payload={'price':False,'dates':True,'days':7}
+        payload={'price':False,'dates':True,'days':7,'date_changes':False,'status_changes':True}
         with self.assertRaises(urllib.error.HTTPError):self.request('favorite_notifications_settings',payload)
         self.service.notifications_supported=True
         self.request('favorite_notifications_settings',payload)

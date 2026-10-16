@@ -21,6 +21,7 @@ class FavoriteNotificationTests(unittest.TestCase):
                          stages=[dict(number=1,date='2026-10-19T15:00:00-03:00',minimum_bid=500000)])
         self.center = Notifications(self.store)
         self.center.begin(self.config)
+        self.center.favorites.configure(dict(price=True,dates=True,days=3,date_changes=False,status_changes=False))
         self.put()
         self.store.set_favorite(ident(self.url()),True);self.center.favorites.sync()
     def tearDown(self):

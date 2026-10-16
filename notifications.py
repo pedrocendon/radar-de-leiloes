@@ -112,7 +112,7 @@ class Notifications:
 
     def test(self):
         with self.store.connect() as db:
-            if not db.execute('SELECT enabled FROM notification_settings WHERE id=1').fetchone()[0] and not any(self.favorites.settings()[k] for k in ('price','dates')):
+            if not db.execute('SELECT enabled FROM notification_settings WHERE id=1').fetchone()[0] and not any(self.favorites.settings()[k] for k in ('price','dates','date_changes','status_changes')):
                 raise ValueError('Ative os avisos antes de enviar um teste.')
             recent = db.execute("SELECT at FROM notification_events WHERE kind='test' ORDER BY id DESC LIMIT 1").fetchone()
             if recent and time.time() - float(recent[0]) < 60:

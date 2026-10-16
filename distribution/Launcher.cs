@@ -6,7 +6,7 @@ using System.Reflection;
 [assembly: AssemblyTitle("Radar de Leilões")]
 [assembly: AssemblyDescription("Acompanhamento de imóveis em leilão")]
 [assembly: AssemblyProduct("Radar de Leilões")]
-[assembly: AssemblyVersion("0.8.3.0")]
+[assembly: AssemblyVersion("0.8.4.0")]
 internal static class Launcher {
     internal static ProcessStartInfo StartInfo(string folder,string[] args) {
         if(args.Length>1 || (args.Length==1 && args[0]!="--background"))throw new ArgumentException("Opção de inicialização inválida.");

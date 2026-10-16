@@ -19,10 +19,12 @@
 <div class="panel"><h2>Avisos dos favoritos</h2>
 <label class="check"><input id="favorite-price-notices" type="checkbox">Avisar quando o lance de um favorito baixar de preço</label>
 <label class="check"><input id="favorite-date-notices" type="checkbox">Lembrar quando o leilão de um favorito estiver próximo</label>
+<label class="check"><input id="favorite-reschedule-notices" type="checkbox">Avisar quando a data ou o horário do leilão de um favorito mudar</label>
+<label class="check"><input id="favorite-status-notices" type="checkbox">Avisar quando o leilão de um favorito for suspenso ou cancelado</label>
 <label for="favorite-notice-days">Antecedência do lembrete</label><select id="favorite-notice-days"><option value="1">1 dia antes</option><option value="3">3 dias antes</option><option value="7">7 dias antes</option></select>
 <p id="favorite-notices-status" role="status" aria-live="polite"></p>
 <p class="hint">Os favoritos são acompanhados mesmo fora dos filtros de Minha busca. As opções são salvas automaticamente. O aviso de preço compara o lance da mesma etapa e data; os lembretes são enviados uma vez por etapa e data, inclusive se você favoritar dentro do prazo escolhido.</p>
-<p class="hint">Ative as buscas automáticas para manter os dados atualizados. Lembretes usam leituras do site feitas nas últimas 48 horas. Confira o edital: as datas podem mudar.</p></div>
+<p class="hint">Ative as buscas automáticas para manter os dados atualizados. Lembretes usam leituras do site feitas nas últimas 48 horas. Mudanças de data e situação são verificadas nas consultas aos sites. A primeira leitura serve de referência; falhas de consulta não significam suspensão ou cancelamento. Confira o edital.</p></div>
 <div class="panel"><h2>Iniciar com o Windows</h2>
 <label class="check"><input id="startup-enabled" type="checkbox" aria-describedby="startup-status startup-help">Iniciar o Radar automaticamente com o Windows</label>
 <p id="startup-status" role="status" aria-live="polite">Consultando a configuração…</p>
@@ -34,7 +36,7 @@
 </section>
 <section id="novidades" class="page" hidden>
 <div class="eyebrow">ENCONTRADOS PARA VOCÊ</div><h1>Avisos do Radar</h1>
-<p>Novos imóveis, quedas de preço dos favoritos e lembretes de leilão. Confira os dados atuais e a disponibilidade no anúncio.</p>
+<p>Novos imóveis, preços, datas e situações dos leilões dos favoritos. Confira os dados atuais e a disponibilidade no anúncio.</p>
 <p class="hint">Últimos 50 grupos de avisos. A lista mantém o registro do momento da consulta; um anúncio pode ter mudado depois.</p>
 <div id="notification-history" class="cards" aria-live="polite"></div>
 <div id="notification-empty" class="empty" hidden><h2>Nenhum aviso registrado ainda</h2><p>Salve sua busca e seus favoritos. Ative os avisos em Configurações e mantenha as consultas atualizadas para receber novidades.</p><button class="secondary" data-go="preferencias">Configurar minha busca</button></div>

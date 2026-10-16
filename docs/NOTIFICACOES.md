@@ -1,6 +1,6 @@
 # Avisos de novos imóveis
 
-Disponíveis na versão instalada do Radar 0.8.3 para Windows 10 e 11.
+Disponíveis na versão instalada do Radar 0.8.4 para Windows 10 e 11.
 
 ## Usar
 
@@ -42,3 +42,21 @@ Os lembretes são verificados a cada minuto com o Radar em execução, sem depen
 Ao remover um favorito, avisos pendentes daquele anúncio não são entregues. Antes da entrega, o Radar revalida a seleção, a situação conhecida e a etapa. O histórico permanece como registro do momento da consulta, mesmo que a informação mude. Favoritos com identidade comprovada e mesma alteração detectada na mesma consulta são agrupados, preservando os links.
 
 São avisos informativos com base na leitura disponível; a fonte pode mudar entre consultas. Confirme o edital. O modo de concentração do Windows pode ocultar o balão. A fila persistente evita repetição após reiniciar, mas não garante exibição pelo sistema.
+
+## Mudança de data, suspensão e cancelamento
+
+Em **Configurações → Avisos dos favoritos**, há duas opções independentes, ativadas por padrão: **Avisar quando a data ou o horário do leilão de um favorito mudar** e **Avisar quando o leilão de um favorito for suspenso ou cancelado**. A atualização preserva as opções anteriores de preço e lembretes.
+
+As mudanças são verificadas depois de cada consulta, incluindo buscas automáticas com a janela fechada. Não dependem dos filtros nem do prazo dos lembretes. A data anterior, a nova data, a situação publicada, os links e a última leitura ficam no histórico de **Avisos**. Suspensões e cancelamentos têm prioridade de entrega sobre os demais avisos dos favoritos.
+
+A comparação de datas exige duas datas válidas para a mesma etapa e anúncio, sem alteração da identificação do leilão. Horários equivalentes em fusos diferentes não geram alerta. Acrescentar ou retirar um horário no mesmo dia também não confirma mudança; horários diferentes geram alerta quando ambos eram informados. Etapas sem número ou duplicadas são ignoradas. Campos ausentes ou inválidos preservam a última referência, sem gerar cancelamento ou mudança. Alterações entre duas datas já passadas não geram aviso.
+
+Um leilão com identificação diferente inicia outra referência. Quando uma identificação conhecida desaparece, o Radar aguarda uma leitura que confirme o evento. Se a fonte nunca informa identificação do leilão, compara-se a mesma etapa do mesmo anúncio; reutilização do anúncio pela fonte pode exigir conferência manual.
+
+Suspensão e cancelamento exigem situação explícita reconhecida no campo do anúncio. Não se interpreta uma menção genérica no texto, uma possibilidade de cancelamento, código numérico desconhecido, inatividade, página removida ou falha de consulta como cancelamento. Mudanças para situação ativa permitem reconhecer uma suspensão posterior como um novo evento.
+
+A primeira leitura forma uma referência. Instalar a atualização, favoritar ou reativar opções não envia ocorrências antigas. Informações incompletas e consultas com erro aguardam confirmação. Retirar o favorito, desativar a fonte ou receber uma atualização que substitui a informação impede a entrega de um aviso pendente obsoleto. O histórico é preservado.
+
+### Cobertura das fontes
+
+O leitor Mega já extrai a situação do painel do anúncio. Saraiva atualmente preserva o código de situação e identifica inatividade; códigos sem correspondência confirmada não são traduzidos para suspensão ou cancelamento. Zuk e o leitor genérico ainda não extraem uma situação específica. A importação assistida não gera estes avisos. Datas podem ser acompanhadas nas fontes em que as etapas são reconhecidas. Portanto, a ausência de aviso não confirma que o leilão continua ativo. Confira o site e o edital.
