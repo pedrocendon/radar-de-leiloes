@@ -34,6 +34,10 @@ O instalador inclui Python, o gerador Excel e a janela própria. Usa uma configu
 
 Antes de distribuir uma nova compilação, teste instalar, abrir, salvar uma busca, favoritar um anúncio, exportar Excel, encerrar pelo ícone perto do relógio e reinstalar preservando os dados. O executável não possui assinatura digital do desenvolvedor.
 
+## Assinatura digital do Windows
+
+Há um processo separado em `distribution/Build-SignedInstaller.ps1` para assinar os executáveis, instalador e desinstalador com um certificado de Code Signing contratado. Ele exige certificado válido e acessível, verifica as assinaturas e gera o resultado em `dist/signed/`. A compilação convencional acima continua sendo sem assinatura. Consulte [contratação, uso e limites do SmartScreen](ASSINATURA-WINDOWS.md).
+
 ## Publicação e atualização
 
 Siga [o procedimento de publicação](ATUALIZACOES.md) para que o programa reconheça a nova versão. O pacote inclui RadarUpdate.exe, auxiliar que aguarda o fechamento do Radar e instala a versão verificada.

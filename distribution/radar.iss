@@ -8,6 +8,15 @@ AppId={{18D20C6C-E502-45E9-B94B-8415C91D369D}
 AppMutex=Local\RadarLeiloes.Desktop
 #endif
 AppName=Radar de Leilões
+#ifdef SignedBuild
+#ifndef PublisherName
+  #error PublisherName is required for a signed build
+#endif
+AppPublisher={#PublisherName}
+VersionInfoCompany={#PublisherName}
+SignTool=radar
+SignedUninstaller=yes
+#endif
 AppVersion=0.8.4
 AppVerName=Radar de Leilões 0.8.4
 DefaultDirName={localappdata}\Programs\RadarLeiloes

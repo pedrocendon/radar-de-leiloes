@@ -19,3 +19,5 @@ Solicite um canal privado ao mantenedor antes de enviar detalhes de uma vulnerab
 - Mantenha as dependências atualizadas e registre as limitações conhecidas.
 
 O instalador 0.7 não tem assinatura digital do desenvolvedor. Nenhuma revisão garante ausência de vulnerabilidades.
+
+O instalador público 0.8.4 também permanece sem assinatura. O processo para assinar as próximas versões está preparado e depende da contratação/configuração de um certificado em nome da empresa. [Situação e limites do SmartScreen](docs/ASSINATURA-WINDOWS.md).
