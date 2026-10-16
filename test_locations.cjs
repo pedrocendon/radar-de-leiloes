@@ -1,0 +1,21 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
+const code=fs.readFileSync(path.join(__dirname,'ui/ui.js'),'utf8');
+const context={};vm.createContext(context);vm.runInContext(code.slice(0,code.indexOf('const $=')),context);
+const suggest=(kind,text,states='',caret=text.length)=>context.locationSuggestions(kind,text,caret,states);
+assert.equal(suggest('states','sao')[0].value,'SP');
+assert.equal(suggest('states','sc')[0].value,'SC');
+assert.equal(context.canonicalStates('São Paulo; sc; SP'),'SP; SC');
+assert.equal(suggest('cities','sao paulo','SP')[0].value,'São Paulo');
+assert.equal(suggest('cities','itap','SC')[0].value,'Itapema');
+assert(suggest('cities','brasilia','DF').some(c=>c.value==='Brasília'));
+assert.equal(suggest('cities','Itapema','SP').length,0);
+assert(suggest('cities','Itapema','SP; Santa Catarina').some(c=>c.uf==='SC'));
+assert(!suggest('cities','Itapema; ita','SC').some(c=>c.value==='Itapema'));
+assert.equal(suggest('cities','zzzzzzzzz').length,0);
+assert(suggest('cities','Bom Jesus').length>1); // Homonymous municipalities retain their UF.
+assert.equal(context.replaceLocation('São Paulo; ita',14,'Itapema').value,'São Paulo; Itapema');
+assert.equal(context.replaceLocation('sao; Itapema',3,'São Paulo').value,'São Paulo; Itapema');
+assert.equal(context.replaceLocation('SP; sc',6,'SP').value,'SP');
+assert.equal(suggest('states','').length,27);
+assert.equal(vm.runInContext('LOCATION_CITIES.length',context),5571);
+console.log('Sugestões: acentos, siglas, múltiplas localidades, filtro por UF, homônimos e edição: OK.');

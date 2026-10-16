@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "filters": {
+    "cities": [],
+    "states": [],
+    "types": [],
+    "min_price": null,
+    "max_price": null,
+    "min_discount": null,
+    "date_from": null,
+    "date_to": null,
+    "show_pending": true
+  },
+  "profile": {
+    "cities": [],
+    "note": "Configure suas preferências em Minha busca."
+  },
+  "suggested_filters": {
+    "cities": [],
+    "states": [],
+    "types": [
+      "apartamento"
+    ],
+    "min_price": null,
+    "max_price": null,
+    "min_discount": null,
+    "date_from": null,
+    "date_to": null,
+    "show_pending": true
+  },
+  "max_pages": 3,
+  "max_new_per_source": 6,
+  "property_overrides": {},
+  "sources": [
+    {
+      "id": "mega",
+      "name": "Mega Leilões",
+      "root": "https://www.megaleiloes.com.br",
+      "adapter": "mega",
+      "enabled": true,
+      "detail_pattern": "/imoveis/.+-[jx]\\d+$",
+      "discovery_urls": [
+        "https://www.megaleiloes.com.br/imoveis/apartamentos"
+      ],
+      "watch_urls": [],
+      "note": "Páginas públicas e contrato incorporado; datas e valores podem divergir entre painel e contrato."
+    },
+    {
+      "id": "top",
+      "name": "Top / Pizzolatti",
+      "root": "https://topleiloes.com.br",
+      "adapter": "browser",
+      "enabled": true,
+      "detail_pattern": "/pregao/[^/]+/[^/]+$",
+      "discovery_urls": [
+        "https://topleiloes.com.br/"
+      ],
+      "watch_urls": [],
+      "note": "Site depende de JavaScript. Texto visível conferido no navegador; usar importação assistida."
+    },
+    {
+      "id": "zuk",
+      "name": "Zuk",
+      "root": "https://www.portalzuk.com.br",
+      "adapter": "zuk",
+      "enabled": true,
+      "detail_pattern": "/imovel/.+/\\d+-\\d+$",
+      "discovery_urls": [
+        "https://www.portalzuk.com.br/leilao-de-imoveis/u/todos-imoveis/es"
+      ],
+      "watch_urls": [],
+      "note": "Link de referência redirecionou com inforetirado=1. Parser genérico pode trazer somente dados parciais. /edital e /ajax-lote são restritos no robots.txt."
+    },
+    {
+      "id": "superbid",
+      "name": "Superbid",
+      "root": "https://www.superbid.net",
+      "adapter": "blocked",
+      "enabled": true,
+      "detail_pattern": "/oferta/.+-\\d+$",
+      "discovery_urls": [
+        "https://www.superbid.net/"
+      ],
+      "watch_urls": [],
+      "note": "HTTP 403 na consulta e no robots.txt. Coleta desativada até acesso oficial disponível. Não tentar contornar."
+    },
+    {
+      "id": "krobel",
+      "name": "Krobel Leilões",
+      "root": "https://krobelleiloes.com.br",
+      "adapter": "browser",
+      "enabled": true,
+      "detail_pattern": "/pregao/[^/]+/[^/]+$",
+      "discovery_urls": [
+        "https://krobelleiloes.com.br/"
+      ],
+      "watch_urls": [],
+      "note": "Site depende de JavaScript. Texto visível conferido no navegador; usar importação assistida."
+    },
+    {
+      "id": "saraiva",
+      "name": "Saraiva Leilões",
+      "root": "https://www.saraivaleiloes.com.br",
+      "adapter": "saraiva",
+      "enabled": true,
+      "detail_pattern": "/eventos/.+/lote/\\d+/[^/]+$",
+      "discovery_urls": [
+        "https://www.saraivaleiloes.com.br/eventos/leilao/576/imoveis-veiculos",
+        "https://www.saraivaleiloes.com.br/"
+      ],
+      "watch_urls": [],
+      "note": "Usa o JSON público incorporado ao HTML. Não acessa auditório nem envia lances.",
+      "catalog_pattern": "/eventos/leilao/\\d+/[^/]+$"
+    }
+  ]
+}

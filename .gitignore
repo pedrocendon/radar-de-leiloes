@@ -1,0 +1,34 @@
+# Dados e preferências locais
+/config.json
+/references.json
+/data/
+/exports/
+/janela-webview/
+*.sqlite*
+*.db
+*.log
+*.lock
+*.xlsx
+*.csv
+.env
+.env.*
+*.pem
+*.key
+
+# Ambientes, downloads e resultados de compilação
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+/work/
+/outputs/
+/build/
+/dist/
+*.exe
+*.dll
+*.zip
+*.whl
+*.nupkg
+.DS_Store
+Thumbs.db
