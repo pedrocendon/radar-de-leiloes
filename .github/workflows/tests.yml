@@ -1,0 +1,20 @@
+name: Testes
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python run.py --prepare
+      - run: python -m unittest test_monitor test_interface test_portable_excel -v
+      - run: node test_price.cjs
+      - run: node test_locations.cjs
