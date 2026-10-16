@@ -8,7 +8,7 @@ Data: 16/10/2026. Dados de teste separados da instalação e dos arquivos pessoa
 - Proteção de rede testada com destinos privados, resposta DNS mista e conexão ao IP validado preservando a verificação TLS do domínio.
 - 151 testes existentes do Windows executados: 150 aprovados e um ignorado por não receber instalador de teste. O teste opcional do instalador já havia sido executado na validação 0.8.4; não foi criado novo instalador Windows para esta entrega.
 - Formatação em reais e autocomplete de localidades: testes JavaScript aprovados. Sintaxe dos scripts verificada.
-- Teste visual pelo navegador local: entrada com conta fictícia, carregamento dos anúncios, inclusão em favoritos e salvamento de filtro de preço.
+- Teste visual pelo navegador local: entrada com conta fictícia, carregamento dos anúncios, inclusão em favoritos e salvamento de filtro de preço. Formulário conferido também em largura de celular, sem rolagem lateral do conteúdo; o menu pode ser deslizado horizontalmente.
 
 ## Consulta real pelo novo servidor
 
@@ -25,6 +25,10 @@ Saraiva, Zuk, Top, Krobel e Superbid mantêm os leitores/limitações anteriores
 ## Hospedagem e limites da verificação
 
 A configuração de produção inclui Docker, volume persistente, servidor Waitress e proxy Caddy. O computador desta validação não tem Docker disponível. O fluxo de integração do repositório inclui testes web no Linux, verificação do Compose, build da imagem e teste HTTP do contêiner.
+
+O trabalho **web** da [execução 38982459213](https://github.com/pedrocendon/radar-de-leiloes/actions/runs/38982459213) passou no GitHub: 26 testes no Linux, configuração Compose, construção da imagem Docker, inicialização e resposta do endpoint de saúde do contêiner. O HTTPS público do Caddy permanece dependente de implantação em um domínio real.
+
+O pacote `Radar-Web.zip` é construído por `tools/package_web.py`, a partir de uma lista explícita de 38 arquivos. A cópia extraída foi usada para executar os mesmos testes web, verificando que o pacote tem os módulos necessários.
 
 Não houve publicação em um domínio real, emissão de certificado real, ensaio de restauração Docker, teste de carga ou auditoria externa. O usuário solicitou preparar a versão e as instruções, pois ainda não possui hospedagem. A entrega não equivale a uma garantia de segurança ou capacidade em produção.
 
