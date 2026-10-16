@@ -24,6 +24,7 @@ internal sealed class RadarTray : ApplicationContext {
     readonly ToolStripMenuItem exit = new ToolStripMenuItem("Encerrar o Radar");
     readonly ToolStripMenuItem updates = new ToolStripMenuItem("Verificar nova versão do Radar");
     string notifiedVersion;
+    DateTime nextNotice=DateTime.MinValue;
     readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
     readonly JavaScriptSerializer json = new JavaScriptSerializer();
     readonly Dictionary<string,Icon> icons = new Dictionary<string,Icon>();
@@ -117,9 +118,11 @@ internal sealed class RadarTray : ApplicationContext {
         radarWindow.ShowRadar();UpdateActivity();
     }
     void NotifyHidden() {
+        if(DateTime.UtcNow<nextNotice)return;
         string marker=Path.Combine(Path.GetDirectoryName(sessionFile),"aviso-segundo-plano-visto.txt");
         if(File.Exists(marker))return;
         tray.ShowBalloonTip(7000,"O Radar continua aberto", "As buscas automáticas continuam se a agenda estiver ativada. Abra pelo atalho ou pelo ícone perto do relógio. Use Encerrar o Radar para sair.",ToolTipIcon.Info);
+        nextNotice=DateTime.UtcNow.AddSeconds(30);
         try{File.WriteAllText(marker,"1");}catch{}
     }
     async Task Change(string action,Dictionary<string,object> payload) {
@@ -148,12 +151,22 @@ internal sealed class RadarTray : ApplicationContext {
             enabled=Convert.ToBoolean(plan["enabled"]);hours=Convert.ToInt32(plan["hours"]);connected=true;
             string label=busy?(Convert.ToString(job["kind"])=="search"?"Buscando imóveis…":"Atualizando a planilha…"):failed?"Última atualização com erro":enabled?"Buscas automáticas ativadas":"Aberto • buscas automáticas desativadas";
             if(busy && Convert.ToString(job["kind"])=="software")label="Atualizando o programa…";
+            if(!busy && DateTime.UtcNow>=nextNotice && state.ContainsKey("notifications_pending") && Convert.ToBoolean(state["notifications_pending"])) {
+                var delivery=await Task.Run(()=>Request("notifications_claim",new Dictionary<string,object>()));
+                if(disposed)return;
+                var notice=delivery["notice"] as Dictionary<string,object>;
+                if(notice!=null) {
+                    tray.ShowBalloonTip(10000,Convert.ToString(notice["title"]),Convert.ToString(notice["text"]),ToolTipIcon.Info);
+                    nextNotice=DateTime.UtcNow.AddSeconds(30);
+                }
+            }
             if(state.ContainsKey("updates")) {
                 var update=(Dictionary<string,object>)state["updates"];
                 string available=Convert.ToString(update.ContainsKey("latest_version")?update["latest_version"]:null);
-                if(Convert.ToString(update["status"])=="available" && available!=notifiedVersion) {
+                if(DateTime.UtcNow>=nextNotice && Convert.ToString(update["status"])=="available" && available!=notifiedVersion) {
                     notifiedVersion=available;
                     tray.ShowBalloonTip(9000,"Nova versão do Radar", "A versão "+available+" está disponível. Abra o Radar e escolha Atualizações para instalar.",ToolTipIcon.Info);
+                    nextNotice=DateTime.UtcNow.AddSeconds(30);
                 }
             }
             status.Text=label;

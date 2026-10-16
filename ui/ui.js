@@ -115,7 +115,7 @@ function enableLocations(){
 }
 
 const $=id=>document.getElementById(id), E=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pages=['imoveis','favoritos','preferencias','fontes','ajuda','atualizacoes','configuracoes'];
+const pages=['imoveis','favoritos','preferencias','fontes','ajuda','atualizacoes','configuracoes','novidades'];
 let fragment=location.hash.slice(1),token=sessionStorage.getItem('radar-token');
 if(fragment&&!pages.includes(fragment)){token=fragment;sessionStorage.setItem('radar-token',token);history.replaceState(null,'',location.pathname);}
 const pendingFavorites=new Set();
@@ -209,7 +209,7 @@ async function refresh(){
  if(stopped)return;
  try{
   const version=++refreshVersion,data=await api('state');if(version!==refreshVersion)return;
-  state=data;$('connection').hidden=true;renderUpdates();renderStartup();
+  state=data;$('connection').hidden=true;renderUpdates();renderStartup();renderNotifications();
   if(!initialized){fillFilters(state.filters);$('schedule-form').elements.hours.value=state.schedule.hours;$('schedule-form').elements.enabled.checked=state.schedule.enabled;initialized=true;}
   const signature=JSON.stringify([state.listings,state.filters]);if(signature!==listingSignature){listingSignature=signature;const current=$('city').value;$('city').innerHTML='<option value="">Todas as cidades</option>'+state.cities.map(c=>`<option value="${E(c)}">${E(c)}</option>`).join('');$('city').value=current;renderCards();renderFavorites();syncFavoriteButtons();}
   const sources=JSON.stringify(state.sources);if(sources!==sourceSignature){sourceSignature=sources;renderSources();}
@@ -241,6 +241,28 @@ function renderUpdates(){
  $('update-receipt').hidden=!u.last_install;$('update-receipt').textContent=u.last_install||'';
 }
 let startupSaving=false;
+let notificationsSaving=false,notificationSignature='';
+function notificationReason(reason){
+ return reason.replace(/\b(city|uf|type|min_price|max_price|min_discount|date_from|date_to)\b/g,key=>({city:'Cidade',uf:'Estado',type:'Tipo',min_price:'Lance mínimo',max_price:'Limite de preço',min_discount:'Desconto mínimo',date_from:'Data inicial',date_to:'Data final'})[key]);
+}
+function renderNotifications(){
+ const n=state.notifications;if(!n)return;
+ if(!notificationsSaving)$('notifications-enabled').checked=n.enabled;
+ $('notifications-enabled').disabled=!n.supported||state.job.busy||notificationsSaving;
+ $('notifications-test').disabled=!n.supported||!n.enabled||state.job.busy||notificationsSaving;
+ $('notifications-status').textContent=!n.supported?'Os avisos do Windows estão disponíveis na versão instalada do Radar.':notificationsSaving?'Salvando preferência…':!n.enabled?'Avisos desativados. Você pode ativá-los quando quiser.':!activeFilters(state.filters)?'Avisos ativados. Configure pelo menos um filtro em Minha busca para receber novidades.':'Avisos ativados. Resultados com dados insuficientes não geram notificações.';
+ const signature=JSON.stringify(n.events);if(signature===notificationSignature)return;notificationSignature=signature;
+ $('notification-empty').hidden=n.events.length>0;
+ $('notification-history').innerHTML=n.events.map(event=>`<article class="panel"><h2>${event.items.length} ${event.items.length===1?'novo imóvel':'novos imóveis'}</h2><p class="hint">Encontrados em ${E(dt(event.at))}</p>${event.items.map(item=>`<div class="notification-item"><h3>${E(item.title)}</h3><p>${E([item.city,item.uf].filter(Boolean).join(' / '))}</p><details><summary>Por que apareceu neste aviso?</summary><ul>${item.reasons.map(reason=>`<li>${E(notificationReason(reason))}</li>`).join('')}</ul></details><div class="button-row">${item.listings.map(l=>`<button class="secondary" data-detail="${E(l.id)}">Ver detalhes</button><a href="${E(url(l.url))}" target="_blank" rel="noopener noreferrer">Abrir anúncio (${E(sourceName(l.source))})</a>`).join('')}</div></div>`).join('')}</article>`).join('');
+}
+$('notifications-enabled').onchange=async e=>{
+ const enabled=e.target.checked;notificationsSaving=true;renderNotifications();
+ try{await api('notifications_settings',{enabled});toast(enabled?'Avisos de novos imóveis ativados.':'Avisos de novos imóveis desativados.');}
+ catch(error){toast(error.message);}
+ finally{notificationsSaving=false;await refresh();renderNotifications();}
+};
+$('notifications-test').onclick=()=>act('notifications_test',{},'Teste solicitado. Aguarde o aviso do Windows; ele pode levar alguns segundos.');
+$('notification-history').onclick=e=>{const button=e.target.closest('[data-detail]');if(button)showDetails(button.dataset.detail);};
 function renderStartup(){
  const s=state.startup;if(!s)return;
  if(!startupSaving)$('startup-enabled').checked=s.enabled===true;

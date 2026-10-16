@@ -107,9 +107,9 @@ class ServerTests(unittest.TestCase):
         self.assertTrue(migrated.rows()[0]['favorited_at'])
     def test_background_status_is_authenticated_and_tracks_schedule(self):
         with self.assertRaises(urllib.error.HTTPError):self.request('background',token=False)
-        self.assertEqual(set(self.request('background')),{'job','schedule','updates'})
+        self.assertEqual(set(self.request('background')),{'job','schedule','updates','notifications_pending'})
         self.assertFalse(self.request('background')['updates']['supported'])
-        for action in ('update_check','update_install','update_settings','startup_settings'):
+        for action in ('update_check','update_install','update_settings','startup_settings','notifications_claim','notifications_settings','notifications_test'):
             with self.assertRaises(urllib.error.HTTPError) as denied:self.request(action,{},token=False)
             self.assertEqual(denied.exception.code,403)
         self.request('schedule',{'enabled':True,'hours':6})

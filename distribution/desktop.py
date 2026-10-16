@@ -17,6 +17,7 @@ APP=Path(__file__).resolve().parent
 class TrayCompanion:
     def __init__(self,server,show=True):
         self.server=server
+        server.service.notifications_supported=True
         from startup import WindowsStartup
         server.service.startup=WindowsStartup(APP.parent/'Radar.exe')
         # Resume an enabled search soon after sign-in, even on computers used less than 24 h/day.

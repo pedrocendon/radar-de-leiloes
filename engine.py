@@ -163,6 +163,8 @@ def run(base,notify=lambda x:None):
     known={r['url'] for r in store.rows()}
     for s in seeds:
         if canonical(s['url']) not in known:store.put(s['source'],s['url'],s,'referencia_planilha','Ainda não confirmado no site',config.get('property_overrides'))
+    from notifications import Notifications
+    notifications=Notifications(store);notifications.begin(config)
     for source in config['sources']:
         sid=source['id'];notify('Consultando '+source['name'])
         if not source.get('enabled',True):store.log(sid,'desativada','Fonte desativada na configuração');continue
@@ -193,6 +195,7 @@ def run(base,notify=lambda x:None):
                 status=e.status if isinstance(e,CollectError) else 'erro_interpretacao';store.put(sid,url,status=status,detail=str(e));errors+=1
         status='parcial' if errors or problems or limited else 'ok'
         store.log(sid,status,dump({'lidos':ok,'falhas':errors,'novos_links':len(new),'paginas_lidas':len(seen),'limite_atingido':limited,'problemas':problems,'cobertura':'amostra limitada; não garante catálogo completo'}))
+    notifications.capture(config)
     export(base)
     from xlsx_export import status_message
     notify('Consulta concluída. '+status_message(base));return store

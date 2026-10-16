@@ -100,6 +100,10 @@ class Service:
         self.closed=threading.Event()
         self.updater=None
         self.startup=None
+        from notifications import Notifications
+        self.notifications=Notifications(self.store)
+        self.notifications.begin(config)
+        self.notifications_supported=False
 
     def startup_state(self):
         return self.startup.state() if self.startup else dict(supported=False,enabled=False,error=False,
@@ -161,14 +165,20 @@ class Service:
             if r['city']:cities.setdefault(norm(r['city']),r['city'])
         return dict(today=now()[:10],listings=listing,sources=sources,filters=config['filters'],suggested=config['suggested_filters'],
                     cities=sorted(cities.values()),
-                    job=job,schedule=schedule,startup=self.startup_state(),updates=self.update_state(),excel=self.excel_state(),last_attempt=max((r['last_attempt'] or '' for r in rows),default=None))
+                    job=job,schedule=schedule,notifications=self.notifications.state(self.notifications_supported),startup=self.startup_state(),updates=self.update_state(),excel=self.excel_state(),last_attempt=max((r['last_attempt'] or '' for r in rows),default=None))
 
     def mutate(self,action,payload):
         # Serialize starts/settings/imports. Workers read their configuration after save.
         with self.guard:
+            if action=='notifications_claim':
+                return {'notice':self.notifications.claim() if self.notifications_supported and not self.job['busy'] else None}
             if self.job['busy'] and self.job['kind']=='software':raise ValueError('Aguarde a atualização do Radar terminar antes de alterar os dados.')
             if self.job['busy'] and action not in ('open_excel','favorite'):raise ValueError('A atualização está em andamento. Aguarde antes de alterar as opções.')
-            if action=='startup_settings':
+            if action in ('notifications_settings','notifications_test'):
+                if not self.notifications_supported:raise ValueError('Use a versão instalada do Radar para receber avisos no Windows.')
+                if action=='notifications_settings':self.notifications.configure(payload.get('enabled'))
+                else:self.notifications.test()
+            elif action=='startup_settings':
                 if not self.startup:raise ValueError('Use a versão instalada do Radar para configurar a inicialização com o Windows.')
                 self.startup.configure(payload)
             elif action in ('update_check','update_install','update_settings'):
@@ -190,11 +200,13 @@ class Service:
             elif action=='filters':
                 config=load(self.base/'config.json');config['filters']=friendly_filters(payload)
                 validate_config(config);save(self.base/'config.json',config)
+                self.notifications.begin(config)
             elif action=='sources':
                 config=load(self.base/'config.json');selected=payload.get('enabled')
                 if not isinstance(selected,list) or any(x not in [s['id'] for s in config['sources']] for x in selected):raise ValueError('Escolha os sites disponíveis na lista.')
                 for s in config['sources']:s['enabled']=s['id'] in selected
                 save(self.base/'config.json',config)
+                self.notifications.begin(config)
             elif action=='schedule':
                 hours=payload.get('hours',24)
                 if hours not in (1,6,12,24):raise ValueError('Escolha um dos intervalos da lista.')
@@ -261,7 +273,7 @@ def make_server(base,port=0):
                 if route=='/api/state':return self.respond(200,service.state())
                 if route=='/api/background':
                     with service.guard:
-                        return self.respond(200,dict(job=dict(service.job),schedule=dict(service.schedule,next_run=service.next_run),updates=service.update_state()))
+                        return self.respond(200,dict(job=dict(service.job),schedule=dict(service.schedule,next_run=service.next_run),updates=service.update_state(),notifications_pending=service.notifications.pending()))
                 if route=='/api/health':return self.respond(200,{'ok':True,'base':str(service.base)})
                 if route=='/api/excel':
                     from xlsx_export import REPORT_NAME

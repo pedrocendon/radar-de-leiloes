@@ -1,7 +1,7 @@
-RADAR DE LEILÕES 0.7 — WINDOWS 10 E 11, 64 BITS
+RADAR DE LEILÕES 0.8.2 — WINDOWS 10 E 11, 64 BITS
 
 INSTALAR
-Abra Instalar-Radar-de-Leiloes-0.7-Windows.exe e siga o assistente.
+Abra Instalar-Radar-de-Leiloes-0.8.2-Windows.exe e siga o assistente.
 A opção de criar um ícone na área de trabalho já vem marcada.
 Ao concluir, abra o Radar pelo ícone na área de trabalho ou no menu Iniciar.
 O Radar abre em uma janela própria. Seus dados ficam neste computador.
@@ -50,7 +50,7 @@ Ao clicar em Baixar cópia, escolha a pasta e o nome na janela Salvar.
 
 BUSCAS AUTOMÁTICAS
 Ative a repetição em Minha busca. O computador precisa estar ligado e o Radar
-em execução. Depois de reiniciar o Windows, abra o Radar novamente.
+em execução. Ative Iniciar com o Windows em Configurações para retomar automaticamente.
 Para encerrar também as buscas, use Encerrar programa dentro do Radar.
 
 ÍCONE PERTO DO RELÓGIO
@@ -70,7 +70,7 @@ ativada, cinza quando a agenda está desativada e laranja se houver erro ou
 não for possível confirmar o estado do programa. O texto descreve a situação.
 Durante uma atualização, aguarde a conclusão antes de encerrar ou alterar a agenda.
 Fechar a janela principal ou a janela de situação mantém o programa em segundo plano.
-O Radar não inicia sozinho com o Windows: abra-o para retomar a agenda.
+A inicialização com o Windows é opcional e pode ser ativada em Configurações.
 
 DADOS E ATUALIZAÇÕES
 Os dados ficam em %LOCALAPPDATA%\RadarLeiloes.
@@ -102,3 +102,12 @@ Em Configurações, marque Iniciar o Radar automaticamente com o Windows. A opç
 Para desativar, desmarque a mesma opção. Isso não encerra o Radar que já está aberto. Para encerrar agora, use Encerrar programa.
 A opção vem desativada. Ative também Buscar automaticamente em Minha busca se quiser consultas em segundo plano. Com a agenda ativada, uma primeira busca é agendada cerca de 30 segundos após o início em segundo plano, seguida pelo intervalo escolhido.
 Se o Windows bloqueou o Radar em Aplicativos de inicialização, reative-o também nas configurações do Windows. O Windows pode atrasar a abertura dos aplicativos.
+
+AVISOS DE NOVOS IMÓVEIS (a partir da versão 0.8.2)
+1. Em Minha busca, salve ao menos um filtro e ative Buscar automaticamente.
+2. Em Configurações, mantenha marcada a opção Avisar no Windows quando encontrar novos imóveis. Use Testar aviso para conferir.
+3. Pode fechar a janela pelo X: o Radar continua perto do relógio e avisa ao encontrar novidades.
+4. Abra Novos imóveis para consultar o histórico, os motivos e os links dos anúncios.
+Os avisos vêm ativados e podem ser desativados em Configurações. Para continuar após entrar no Windows, ative também Iniciar o Radar automaticamente com o Windows.
+É necessário manter o computador ligado, sem suspensão e conectado à internet. Encerrar o Radar interrompe as buscas e os avisos. O modo Não incomodar e as preferências de notificações do Windows podem ocultar o aviso; o histórico continua no Radar.
+Os avisos consideram imóveis novos para o Radar com dados suficientes para confirmar os filtros. Anúncios já salvos não geram uma sequência de avisos ao atualizar ou mudar a busca. Duplicidades comprovadas são agrupadas; possíveis duplicidades sem identificação segura podem aparecer separadamente. Os dados são válidos no momento da consulta: confira a situação no site antes de agir.
