@@ -27,10 +27,13 @@ class Notifications:
                 db.execute("INSERT INTO notification_settings VALUES(1,1,'')")
                 self._baseline(db)
 
+        from favorite_notifications import FavoriteNotifications
+        self.favorites = FavoriteNotifications(store)
+
     def _baseline(self, db):
         db.execute('INSERT OR IGNORE INTO notification_seen_listings SELECT id FROM listings')
         db.execute('INSERT OR IGNORE INTO notification_seen_properties SELECT property_id FROM listings')
-        db.execute('UPDATE notification_events SET dispatched=1 WHERE dispatched=0')
+        db.execute("UPDATE notification_events SET dispatched=1 WHERE dispatched=0 AND kind IN ('properties','test')")
 
     def configure(self, enabled):
         if type(enabled) is not bool:
@@ -40,6 +43,7 @@ class Notifications:
             self._baseline(db)
 
     def begin(self, config):
+        self.favorites.sync()
         signature = dump(dict(filters={k: sorted(v) if isinstance(v, list) else v
                           for k, v in config['filters'].items() if k != 'show_pending'},
                           sources=sorted(s['id'] for s in config['sources'] if s.get('enabled', True))))
@@ -51,6 +55,7 @@ class Notifications:
 
     def capture(self, config):
         """Called after collection, before Excel export. Errors/stale data never qualify."""
+        self.favorites.capture(config)
         active = {s['id'] for s in config['sources'] if s.get('enabled', True)}
         rows = self.store.rows()
         grouped = {}
@@ -96,32 +101,33 @@ class Notifications:
     def state(self, supported=False):
         with self.store.connect() as db:
             enabled = bool(db.execute('SELECT enabled FROM notification_settings WHERE id=1').fetchone()[0])
-            events = [dict(id=r['id'], at=r['at'], **json.loads(r['data'])) for r in db.execute(
-                "SELECT * FROM notification_events WHERE kind='properties' ORDER BY id DESC LIMIT 50")]
+            events = [dict(id=r['id'], at=r['at'], kind=r['kind'], **json.loads(r['data'])) for r in db.execute(
+                "SELECT * FROM notification_events WHERE kind!='test' ORDER BY id DESC LIMIT 50")]
             pending = db.execute('SELECT COUNT(*) FROM notification_events WHERE dispatched=0').fetchone()[0]
-            return dict(enabled=enabled, supported=supported, events=events, pending=pending)
+            return dict(enabled=enabled, supported=supported, favorites=self.favorites.settings(), events=events, pending=pending)
 
     def pending(self):
         with self.store.connect() as db:
-            return bool(db.execute('SELECT enabled AND EXISTS(SELECT 1 FROM notification_events WHERE dispatched=0) FROM notification_settings WHERE id=1').fetchone()[0])
+            return bool(db.execute('SELECT EXISTS(SELECT 1 FROM notification_events WHERE dispatched=0)').fetchone()[0])
 
     def test(self):
         with self.store.connect() as db:
-            if not db.execute('SELECT enabled FROM notification_settings WHERE id=1').fetchone()[0]:
+            if not db.execute('SELECT enabled FROM notification_settings WHERE id=1').fetchone()[0] and not any(self.favorites.settings()[k] for k in ('price','dates')):
                 raise ValueError('Ative os avisos antes de enviar um teste.')
             recent = db.execute("SELECT at FROM notification_events WHERE kind='test' ORDER BY id DESC LIMIT 1").fetchone()
             if recent and time.time() - float(recent[0]) < 60:
                 raise ValueError('Aguarde um minuto antes de testar novamente.')
             db.execute("INSERT INTO notification_events(at,kind,data) VALUES(?,'test','{}')", (str(time.time()),))
 
-    def claim(self):
+    def claim(self, config=None):
+        favorite = self.favorites.claim(config)
+        if favorite:
+            return favorite
         # Consume atomically before handing off: no duplicate popup after a tray restart.
         # History survives a crash or Windows suppressing the banner; display is not guaranteed.
         with self.store.connect() as db:
             db.execute('BEGIN IMMEDIATE')
-            if not db.execute('SELECT enabled FROM notification_settings WHERE id=1').fetchone()[0]:
-                return None
-            rows = db.execute('SELECT * FROM notification_events WHERE dispatched=0 ORDER BY id LIMIT 20').fetchall()
+            rows = db.execute("SELECT * FROM notification_events WHERE dispatched=0 AND kind IN ('properties','test') ORDER BY id LIMIT 20").fetchall()
             if not rows:
                 return None
             properties = [r for r in rows if r['kind'] == 'properties']
@@ -133,4 +139,4 @@ class Notifications:
             count = sum(len(json.loads(r['data'])['items']) for r in properties)
             return dict(title='Radar: novos imóveis encontrados',
                         text=(f'{count} novo imóvel atende' if count == 1 else f'{count} novos imóveis atendem') +
-                             ' aos filtros da sua busca. Abra o Radar e consulte Novos imóveis para ver os detalhes.')
+                             ' aos filtros da sua busca. Abra o Radar e consulte Avisos para ver os detalhes.')

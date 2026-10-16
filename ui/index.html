@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Radar de Leilões</title><link rel="stylesheet" href="/style.css"><script src="/ui.js" defer></script></head>
 <body>
 <header><a class="brand" href="#imoveis"><span class="brand-icon" aria-hidden="true">R</span><span>Radar de Leilões<small>Seu acompanhamento de imóveis</small></span></a><div class="header-actions"><span class="local">Neste computador</span><button id="close-app" class="quiet">Encerrar programa</button></div></header>
-<div class="layout"><nav aria-label="Menu principal"><button data-page="imoveis" class="nav active" aria-current="page">Imóveis acompanhados</button><button data-page="novidades" class="nav">Novos imóveis</button><button data-page="favoritos" class="nav">Favoritos <span id="favorite-nav-count" class="nav-count">0</span></button><button data-page="preferencias" class="nav">Minha busca</button><button data-page="fontes" class="nav">Sites consultados</button><button data-page="configuracoes" class="nav">Configurações</button><button data-page="atualizacoes" class="nav">Atualizações</button><button data-page="ajuda" class="nav">Como usar</button><div class="nav-note">Os anúncios ficam salvos mesmo quando um site não responde.</div></nav>
+<div class="layout"><nav aria-label="Menu principal"><button data-page="imoveis" class="nav active" aria-current="page">Imóveis acompanhados</button><button data-page="novidades" class="nav">Avisos</button><button data-page="favoritos" class="nav">Favoritos <span id="favorite-nav-count" class="nav-count">0</span></button><button data-page="preferencias" class="nav">Minha busca</button><button data-page="fontes" class="nav">Sites consultados</button><button data-page="configuracoes" class="nav">Configurações</button><button data-page="atualizacoes" class="nav">Atualizações</button><button data-page="ajuda" class="nav">Como usar</button><div class="nav-note">Os anúncios ficam salvos mesmo quando um site não responde.</div></nav>
 <main>
 <div id="update-banner" class="notice" hidden><span id="update-banner-text"></span> <button class="secondary" data-go="atualizacoes">Ver atualização</button></div>
 <div id="connection" class="notice error" role="alert" hidden></div>
@@ -13,9 +13,16 @@
 <div class="panel"><h2>Avisos de novos imóveis</h2>
 <label class="check"><input id="notifications-enabled" type="checkbox" aria-describedby="notifications-status">Avisar no Windows quando novos imóveis atenderem à minha busca</label>
 <p id="notifications-status" role="status" aria-live="polite"></p>
-<div class="button-row"><button id="notifications-test" class="secondary">Enviar aviso de teste</button><button class="quiet" data-go="novidades">Ver novos imóveis encontrados</button></div>
+<div class="button-row"><button id="notifications-test" class="secondary">Enviar aviso de teste</button><button class="quiet" data-go="novidades">Ver histórico de avisos</button></div>
 <p class="hint">Os avisos chegam mesmo com a janela fechada, enquanto o Radar estiver aberto perto do relógio. Ative a busca automática em Minha busca para receber novidades sem consultar manualmente.</p>
-<p class="hint">O Windows pode silenciar avisos no modo Não perturbe ou nas configurações de notificações. Os resultados continuam salvos em Novos imóveis.</p></div>
+<p class="hint">O Windows pode silenciar avisos no modo Não perturbe ou nas configurações de notificações. Os resultados continuam salvos em Avisos.</p></div>
+<div class="panel"><h2>Avisos dos favoritos</h2>
+<label class="check"><input id="favorite-price-notices" type="checkbox">Avisar quando o lance de um favorito baixar de preço</label>
+<label class="check"><input id="favorite-date-notices" type="checkbox">Lembrar quando o leilão de um favorito estiver próximo</label>
+<label for="favorite-notice-days">Antecedência do lembrete</label><select id="favorite-notice-days"><option value="1">1 dia antes</option><option value="3">3 dias antes</option><option value="7">7 dias antes</option></select>
+<p id="favorite-notices-status" role="status" aria-live="polite"></p>
+<p class="hint">Os favoritos são acompanhados mesmo fora dos filtros de Minha busca. As opções são salvas automaticamente. O aviso de preço compara o lance da mesma etapa e data; os lembretes são enviados uma vez por etapa e data, inclusive se você favoritar dentro do prazo escolhido.</p>
+<p class="hint">Ative as buscas automáticas para manter os dados atualizados. Lembretes usam leituras do site feitas nas últimas 48 horas. Confira o edital: as datas podem mudar.</p></div>
 <div class="panel"><h2>Iniciar com o Windows</h2>
 <label class="check"><input id="startup-enabled" type="checkbox" aria-describedby="startup-status startup-help">Iniciar o Radar automaticamente com o Windows</label>
 <p id="startup-status" role="status" aria-live="polite">Consultando a configuração…</p>
@@ -26,11 +33,11 @@
 <p class="hint">O computador precisa estar ligado, sem suspensão e com internet. Para parar agora, use Encerrar programa. A opção acima controla apenas a próxima entrada no Windows.</p></div>
 </section>
 <section id="novidades" class="page" hidden>
-<div class="eyebrow">ENCONTRADOS PARA VOCÊ</div><h1>Novos imóveis</h1>
-<p>Resultados novos que atenderam aos filtros no momento da consulta. Confira os dados atuais e a disponibilidade no anúncio.</p>
-<p class="hint">Últimas 50 buscas com novidades. Imóveis já salvos não geram novos avisos ao mudar os filtros ou reativar as notificações.</p>
+<div class="eyebrow">ENCONTRADOS PARA VOCÊ</div><h1>Avisos do Radar</h1>
+<p>Novos imóveis, quedas de preço dos favoritos e lembretes de leilão. Confira os dados atuais e a disponibilidade no anúncio.</p>
+<p class="hint">Últimos 50 grupos de avisos. A lista mantém o registro do momento da consulta; um anúncio pode ter mudado depois.</p>
 <div id="notification-history" class="cards" aria-live="polite"></div>
-<div id="notification-empty" class="empty" hidden><h2>Nenhum aviso de imóvel novo ainda</h2><p>Salve os filtros em Minha busca e consulte os sites. O Radar avisa quando encontrar resultados novos com dados suficientes para confirmar sua busca.</p><button class="secondary" data-go="preferencias">Configurar minha busca</button></div>
+<div id="notification-empty" class="empty" hidden><h2>Nenhum aviso registrado ainda</h2><p>Salve sua busca e seus favoritos. Ative os avisos em Configurações e mantenha as consultas atualizadas para receber novidades.</p><button class="secondary" data-go="preferencias">Configurar minha busca</button></div>
 </section>
 <section id="atualizacoes" class="page" hidden>
 <div class="eyebrow">SEMPRE EM DIA</div><h1>Atualizações do Radar</h1>

@@ -241,7 +241,7 @@ function renderUpdates(){
  $('update-receipt').hidden=!u.last_install;$('update-receipt').textContent=u.last_install||'';
 }
 let startupSaving=false;
-let notificationsSaving=false,notificationSignature='';
+let notificationsSaving=false,favoriteNoticesSaving=false,notificationSignature='';
 function notificationReason(reason){
  return reason.replace(/\b(city|uf|type|min_price|max_price|min_discount|date_from|date_to)\b/g,key=>({city:'Cidade',uf:'Estado',type:'Tipo',min_price:'Lance mínimo',max_price:'Limite de preço',min_discount:'Desconto mínimo',date_from:'Data inicial',date_to:'Data final'})[key]);
 }
@@ -249,12 +249,23 @@ function renderNotifications(){
  const n=state.notifications;if(!n)return;
  if(!notificationsSaving)$('notifications-enabled').checked=n.enabled;
  $('notifications-enabled').disabled=!n.supported||state.job.busy||notificationsSaving;
- $('notifications-test').disabled=!n.supported||!n.enabled||state.job.busy||notificationsSaving;
+ $('notifications-test').disabled=!n.supported||!(n.enabled||n.favorites.price||n.favorites.dates)||state.job.busy||notificationsSaving;
+ if(!favoriteNoticesSaving){$('favorite-price-notices').checked=n.favorites.price;$('favorite-date-notices').checked=n.favorites.dates;$('favorite-notice-days').value=String(n.favorites.days);}
+ for(const id of ['favorite-price-notices','favorite-date-notices','favorite-notice-days'])$(id).disabled=!n.supported||state.job.busy||favoriteNoticesSaving;
+ $('favorite-notice-days').disabled=$('favorite-notice-days').disabled||!n.favorites.dates;
+ $('favorite-notices-status').textContent=!n.supported?'Os avisos do Windows estão disponíveis na versão instalada do Radar.':favoriteNoticesSaving?'Salvando preferência…':'Preferências salvas. '+(n.favorites.price?'Avisos de preço ativados. ':'Avisos de preço desativados. ')+(n.favorites.dates?'Lembretes ativados com '+n.favorites.days+(n.favorites.days===1?' dia':' dias')+' de antecedência.':'Lembretes desativados.');
  $('notifications-status').textContent=!n.supported?'Os avisos do Windows estão disponíveis na versão instalada do Radar.':notificationsSaving?'Salvando preferência…':!n.enabled?'Avisos desativados. Você pode ativá-los quando quiser.':!activeFilters(state.filters)?'Avisos ativados. Configure pelo menos um filtro em Minha busca para receber novidades.':'Avisos ativados. Resultados com dados insuficientes não geram notificações.';
  const signature=JSON.stringify(n.events);if(signature===notificationSignature)return;notificationSignature=signature;
  $('notification-empty').hidden=n.events.length>0;
- $('notification-history').innerHTML=n.events.map(event=>`<article class="panel"><h2>${event.items.length} ${event.items.length===1?'novo imóvel':'novos imóveis'}</h2><p class="hint">Encontrados em ${E(dt(event.at))}</p>${event.items.map(item=>`<div class="notification-item"><h3>${E(item.title)}</h3><p>${E([item.city,item.uf].filter(Boolean).join(' / '))}</p><details><summary>Por que apareceu neste aviso?</summary><ul>${item.reasons.map(reason=>`<li>${E(notificationReason(reason))}</li>`).join('')}</ul></details><div class="button-row">${item.listings.map(l=>`<button class="secondary" data-detail="${E(l.id)}">Ver detalhes</button><a href="${E(url(l.url))}" target="_blank" rel="noopener noreferrer">Abrir anúncio (${E(sourceName(l.source))})</a>`).join('')}</div></div>`).join('')}</article>`).join('');
+ $('notification-history').innerHTML=n.events.map(event=>`<article class="panel"><h2>${E(event.kind==='favorite_price'?'Favorito baixou de preço':event.kind==='favorite_date'?'Leilão de favorito próximo':event.items.length+' '+(event.items.length===1?'novo imóvel':'novos imóveis'))}</h2><p class="hint">Registrado em ${E(dt(event.at))}</p>${event.items.map(item=>`<div class="notification-item"><h3>${E(item.title)}</h3><p>${E([item.city,item.uf].filter(Boolean).join(' / '))}</p>${event.kind!=='properties'?`<p>Data da etapa: ${E(item.date?dt(item.date):'Não informada')}<br><small>Última leitura do site: ${E(dt(item.last_success))}</small></p>`:''}<details${event.kind!=='properties'?' open':''}><summary>Por que apareceu neste aviso?</summary><ul>${item.reasons.map(reason=>`<li>${E(notificationReason(reason))}</li>`).join('')}</ul></details><div class="button-row">${item.listings.map(l=>`<button class="secondary" data-detail="${E(l.id)}">Ver detalhes</button><a href="${E(url(l.url))}" target="_blank" rel="noopener noreferrer">Abrir anúncio (${E(sourceName(l.source))})</a>`).join('')}</div></div>`).join('')}</article>`).join('');
 }
+for(const id of ['favorite-price-notices','favorite-date-notices','favorite-notice-days'])$(id).onchange=async()=>{
+ const payload={price:$('favorite-price-notices').checked,dates:$('favorite-date-notices').checked,days:Number($('favorite-notice-days').value)};
+ favoriteNoticesSaving=true;renderNotifications();
+ try{await api('favorite_notifications_settings',payload);toast('Preferências dos avisos dos favoritos salvas.');}
+ catch(error){toast(error.message);}
+ finally{favoriteNoticesSaving=false;await refresh();}
+};
 $('notifications-enabled').onchange=async e=>{
  const enabled=e.target.checked;notificationsSaving=true;renderNotifications();
  try{await api('notifications_settings',{enabled});toast(enabled?'Avisos de novos imóveis ativados.':'Avisos de novos imóveis desativados.');}

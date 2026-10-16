@@ -41,6 +41,19 @@ class ServerTests(unittest.TestCase):
         if origin:headers['Origin']=origin
         req=urllib.request.Request(self.url+path,headers=headers,data=None if payload is None else json.dumps(payload).encode())
         with urllib.request.urlopen(req,timeout=5) as r:return json.load(r)
+    def test_favorite_notification_preferences_roundtrip(self):
+        payload={'price':False,'dates':True,'days':7}
+        with self.assertRaises(urllib.error.HTTPError):self.request('favorite_notifications_settings',payload)
+        self.service.notifications_supported=True
+        self.request('favorite_notifications_settings',payload)
+        self.assertEqual(self.request('state')['notifications']['favorites'],payload)
+        self.assertEqual(Service(self.base).notifications.favorites.settings(),payload)
+        with self.assertRaises(urllib.error.HTTPError):self.request('favorite_notifications_settings',dict(payload,days=2))
+    def test_agenda_checks_favorite_dates_without_search(self):
+        self.service.next_run=None
+        with patch.object(self.service.closed,'wait',side_effect=[False,True]),patch.object(self.service.notifications.favorites,'capture') as capture:
+            self.service.agenda()
+            capture.assert_called_once_with(self.config,dates_only=True)
     def test_local_auth_and_origin(self):
         for token,origin in [(False,None),(True,'https://untrusted.example')]:
             with self.assertRaises(urllib.error.HTTPError) as ctx:self.request('state',token=token,origin=origin)
@@ -109,7 +122,7 @@ class ServerTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError):self.request('background',token=False)
         self.assertEqual(set(self.request('background')),{'job','schedule','updates','notifications_pending'})
         self.assertFalse(self.request('background')['updates']['supported'])
-        for action in ('update_check','update_install','update_settings','startup_settings','notifications_claim','notifications_settings','notifications_test'):
+        for action in ('update_check','update_install','update_settings','startup_settings','notifications_claim','favorite_notifications_settings','notifications_settings','notifications_test'):
             with self.assertRaises(urllib.error.HTTPError) as denied:self.request(action,{},token=False)
             self.assertEqual(denied.exception.code,403)
         self.request('schedule',{'enabled':True,'hours':6})

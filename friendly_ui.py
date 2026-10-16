@@ -171,12 +171,13 @@ class Service:
         # Serialize starts/settings/imports. Workers read their configuration after save.
         with self.guard:
             if action=='notifications_claim':
-                return {'notice':self.notifications.claim() if self.notifications_supported and not self.job['busy'] else None}
+                return {'notice':self.notifications.claim(load(self.base/'config.json')) if self.notifications_supported and not self.job['busy'] else None}
             if self.job['busy'] and self.job['kind']=='software':raise ValueError('Aguarde a atualização do Radar terminar antes de alterar os dados.')
             if self.job['busy'] and action not in ('open_excel','favorite'):raise ValueError('A atualização está em andamento. Aguarde antes de alterar as opções.')
-            if action in ('notifications_settings','notifications_test'):
+            if action in ('notifications_settings','notifications_test','favorite_notifications_settings'):
                 if not self.notifications_supported:raise ValueError('Use a versão instalada do Radar para receber avisos no Windows.')
                 if action=='notifications_settings':self.notifications.configure(payload.get('enabled'))
+                elif action=='favorite_notifications_settings':self.notifications.favorites.configure(payload)
                 else:self.notifications.test()
             elif action=='startup_settings':
                 if not self.startup:raise ValueError('Use a versão instalada do Radar para configurar a inicialização com o Windows.')
@@ -191,6 +192,7 @@ class Service:
                 if not isinstance(listing_id,str) or not listing_id or type(enabled) is not bool:
                     raise ValueError('Escolha um anúncio e informe se deseja favoritar ou remover dos favoritos.')
                 at=self.store.set_favorite(listing_id,enabled)
+                self.notifications.favorites.sync()
                 return {'ok':True,'id':listing_id,'favorite':enabled,'favorited_at':at}
             elif action=='search':
                 if not any(s.get('enabled',True) for s in load(self.base/'config.json')['sources']):raise ValueError('Selecione pelo menos um site em Sites consultados antes de buscar.')
@@ -243,8 +245,13 @@ class Service:
         return {'ok':True}
 
     def agenda(self):
+        next_reminder=0
         while not self.closed.wait(15):
             with self.guard:
+                if not self.job['busy'] and time.time()>=next_reminder:
+                    try:self.notifications.favorites.capture(load(self.base/'config.json'),dates_only=True)
+                    except Exception:self.record_error()
+                    next_reminder=time.time()+60
                 if self.next_run and time.time()>=self.next_run and not self.job['busy']:
                     self.mutate('search',{})
 

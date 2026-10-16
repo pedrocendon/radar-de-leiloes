@@ -35,7 +35,7 @@ with zipfile.ZipFile(DOWNLOAD/'webview2.nupkg') as archive:
     (PAYLOAD/'WebView2Loader.dll').write_bytes(archive.read('runtimes/win-x64/native/WebView2Loader.dll'))
     (PAYLOAD/'licenses/WebView2.txt').write_bytes(archive.read('LICENSE.txt'))
 (PAYLOAD/'runtime/python313._pth').write_text('python313.zip\n.\n../app\nLib/site-packages\n',encoding='utf-8')
-for name in ['app.py','collectors.py','engine.py','friendly_ui.py','xlsx_export.py','portable_excel.py','updater.py','version.py','startup.py','notifications.py']:
+for name in ['app.py','collectors.py','engine.py','friendly_ui.py','xlsx_export.py','portable_excel.py','updater.py','version.py','startup.py','notifications.py','favorite_notifications.py']:
     shutil.copy2(SOURCE/name,PAYLOAD/'app'/name)
 shutil.copy2(DIST/'desktop.py',PAYLOAD/'app/desktop.py')
 for name in ['ui.js','index.html','style.css']:

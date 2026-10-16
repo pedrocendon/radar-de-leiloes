@@ -1,7 +1,7 @@
-RADAR DE LEILÕES 0.8.2 — WINDOWS 10 E 11, 64 BITS
+RADAR DE LEILÕES 0.8.3 — WINDOWS 10 E 11, 64 BITS
 
 INSTALAR
-Abra Instalar-Radar-de-Leiloes-0.8.2-Windows.exe e siga o assistente.
+Abra Instalar-Radar-de-Leiloes-0.8.3-Windows.exe e siga o assistente.
 A opção de criar um ícone na área de trabalho já vem marcada.
 Ao concluir, abra o Radar pelo ícone na área de trabalho ou no menu Iniciar.
 O Radar abre em uma janela própria. Seus dados ficam neste computador.
@@ -103,11 +103,17 @@ Para desativar, desmarque a mesma opção. Isso não encerra o Radar que já est
 A opção vem desativada. Ative também Buscar automaticamente em Minha busca se quiser consultas em segundo plano. Com a agenda ativada, uma primeira busca é agendada cerca de 30 segundos após o início em segundo plano, seguida pelo intervalo escolhido.
 Se o Windows bloqueou o Radar em Aplicativos de inicialização, reative-o também nas configurações do Windows. O Windows pode atrasar a abertura dos aplicativos.
 
-AVISOS DE NOVOS IMÓVEIS (a partir da versão 0.8.2)
+AVISOS DE NOVOS IMÓVEIS (a partir da versão 0.8.3)
 1. Em Minha busca, salve ao menos um filtro e ative Buscar automaticamente.
 2. Em Configurações, mantenha marcada a opção Avisar no Windows quando encontrar novos imóveis. Use Testar aviso para conferir.
 3. Pode fechar a janela pelo X: o Radar continua perto do relógio e avisa ao encontrar novidades.
-4. Abra Novos imóveis para consultar o histórico, os motivos e os links dos anúncios.
+4. Abra Avisos para consultar o histórico, os motivos e os links dos anúncios.
 Os avisos vêm ativados e podem ser desativados em Configurações. Para continuar após entrar no Windows, ative também Iniciar o Radar automaticamente com o Windows.
 É necessário manter o computador ligado, sem suspensão e conectado à internet. Encerrar o Radar interrompe as buscas e os avisos. O modo Não incomodar e as preferências de notificações do Windows podem ocultar o aviso; o histórico continua no Radar.
 Os avisos consideram imóveis novos para o Radar com dados suficientes para confirmar os filtros. Anúncios já salvos não geram uma sequência de avisos ao atualizar ou mudar a busca. Duplicidades comprovadas são agrupadas; possíveis duplicidades sem identificação segura podem aparecer separadamente. Os dados são válidos no momento da consulta: confira a situação no site antes de agir.
+
+AVISOS DOS FAVORITOS (a partir da versão 0.8.3)
+Em Configurações > Avisos dos favoritos, você pode ativar ou desativar separadamente os avisos de queda de preço e os lembretes de leilão. As duas opções vêm ativadas. Escolha antecedência de 1, 3 ou 7 dias; o padrão é 3 dias. A alteração é salva na hora.
+O aviso de preço mostra o lance anterior e o atual da mesma etapa e data. A primeira leitura serve de referência: não gera uma queda de preço presumida. Mudança da data ou do leilão começa uma nova comparação. Valores ausentes, consultas que falharam e anúncios encerrados não geram avisos.
+Os lembretes são verificados a cada minuto, mesmo sem abrir a janela, e enviados uma vez por etapa e data. Favoritar dentro do prazo também permite um lembrete. A data precisa vir de uma leitura do site feita nas últimas 48 horas; ative as buscas automáticas para mantê-la atualizada. Horários já passados são excluídos quando informados. Sem horário, o lembrete pode ocorrer no próprio dia.
+Os favoritos são acompanhados independentemente dos filtros da busca. Fontes desativadas não geram avisos. Ao retirar um anúncio dos favoritos, os avisos ainda não enviados são descartados; o histórico permanece em Avisos. Confirme sempre as condições no edital.
