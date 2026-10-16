@@ -96,3 +96,9 @@ ATUALIZAR O RADAR
 Abra a seção Atualizações. O Radar avisa automaticamente quando houver uma nova versão. Clique em Atualizar e reiniciar e confirme. Ele baixa, confere o arquivo, faz uma cópia de segurança dos dados e instala. Aguarde terminar; o programa abrirá novamente.
 Para quem usa 0.7 ou anterior, é preciso instalar a 0.8 uma única vez para ativar esse recurso. Os anúncios e favoritos são mantidos.
 Se a internet falhar, tente novamente depois. O programa continua disponível. A cópia de segurança fica na pasta updates dos seus dados em %LOCALAPPDATA%\RadarLeiloes.
+
+INICIAR COM O WINDOWS (a partir da versão 0.8.1)
+Em Configurações, marque Iniciar o Radar automaticamente com o Windows. A opção é salva na hora. Na próxima entrada na sua conta, o Radar ficará no ícone perto do relógio, sem abrir a janela. Para mostrar a janela, use o atalho ou dê dois cliques nesse ícone.
+Para desativar, desmarque a mesma opção. Isso não encerra o Radar que já está aberto. Para encerrar agora, use Encerrar programa.
+A opção vem desativada. Ative também Buscar automaticamente em Minha busca se quiser consultas em segundo plano. Com a agenda ativada, uma primeira busca é agendada cerca de 30 segundos após o início em segundo plano, seguida pelo intervalo escolhido.
+Se o Windows bloqueou o Radar em Aplicativos de inicialização, reative-o também nas configurações do Windows. O Windows pode atrasar a abertura dos aplicativos.

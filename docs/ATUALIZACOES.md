@@ -10,7 +10,7 @@ A partir da versão 0.8, o programa verifica versões estáveis no repositório 
 
 A verificação automática vem ativada. Acontece ao abrir, após cerca de 20 segundos, e a cada 24 horas enquanto o Radar permanece aberto. Verificações repetidas em menos de um minuto são evitadas. Você pode desativar os avisos automáticos e usar **Verificar agora**. A instalação sempre depende do clique do usuário; uma busca em andamento precisa terminar antes.
 
-O computador precisa estar ligado e conectado à internet. Fechar a janela mantém o Radar ativo perto do relógio. Encerrar o programa ou suspender o computador interrompe a verificação. O Radar não se inicia automaticamente com o Windows.
+O computador precisa estar ligado e conectado à internet. Fechar a janela mantém o Radar ativo perto do relógio. Encerrar o programa ou suspender o computador interrompe a verificação. A partir da versão 0.8.1, a seção Configurações permite ativar a inicialização com o Windows em segundo plano. A opção vem desativada até o usuário escolher ativá-la.
 
 ## Dados e recuperação
 

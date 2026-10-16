@@ -17,6 +17,11 @@ APP=Path(__file__).resolve().parent
 class TrayCompanion:
     def __init__(self,server,show=True):
         self.server=server
+        from startup import WindowsStartup
+        server.service.startup=WindowsStartup(APP.parent/'Radar.exe')
+        # Resume an enabled search soon after sign-in, even on computers used less than 24 h/day.
+        if not show and server.service.schedule.get('enabled'):
+            server.service.next_run=time.time()+30
         from updater import Updater
         server.service.updater=Updater(server.service,APP.parent,server.shutdown)
         threading.Thread(target=server.service.updater.agenda,daemon=True).start()

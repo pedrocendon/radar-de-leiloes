@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from version import VERSION
 
 CSC=Path('C:/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe')
 HARNESS=r'''
@@ -48,12 +49,12 @@ class NativeUpdateTests(unittest.TestCase):
     def build(self,name,exitcode,folder=None):
         folder=folder or self.root
         src=folder/(name+'.cs')
-        src.write_text('using System.Reflection;[assembly:AssemblyVersion("0.8.0.0")]class Stub{static int Main(){return '+str(exitcode)+';}}')
+        src.write_text('using System.Reflection;[assembly:AssemblyVersion("'+VERSION+'.0")]class Stub{static int Main(){return '+str(exitcode)+';}}')
         target=folder/name
         subprocess.run([str(CSC),'/nologo','/target:exe','/out:'+str(target),str(src)],check=True,capture_output=True)
         return target
 
-    def execute(self,installer,digest=None,version='0.8.0'):
+    def execute(self,installer,digest=None,version=VERSION):
         digest=digest or hashlib.sha256(installer.read_bytes()).hexdigest()
         return subprocess.run([str(self.root/'Harness.exe'),str(installer),digest,str(self.install),version,
                                str(self.root/'resultado.json')],capture_output=True,text=True,timeout=180)

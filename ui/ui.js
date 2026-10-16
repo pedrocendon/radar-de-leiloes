@@ -115,7 +115,7 @@ function enableLocations(){
 }
 
 const $=id=>document.getElementById(id), E=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pages=['imoveis','favoritos','preferencias','fontes','ajuda','atualizacoes'];
+const pages=['imoveis','favoritos','preferencias','fontes','ajuda','atualizacoes','configuracoes'];
 let fragment=location.hash.slice(1),token=sessionStorage.getItem('radar-token');
 if(fragment&&!pages.includes(fragment)){token=fragment;sessionStorage.setItem('radar-token',token);history.replaceState(null,'',location.pathname);}
 const pendingFavorites=new Set();
@@ -209,7 +209,7 @@ async function refresh(){
  if(stopped)return;
  try{
   const version=++refreshVersion,data=await api('state');if(version!==refreshVersion)return;
-  state=data;$('connection').hidden=true;renderUpdates();
+  state=data;$('connection').hidden=true;renderUpdates();renderStartup();
   if(!initialized){fillFilters(state.filters);$('schedule-form').elements.hours.value=state.schedule.hours;$('schedule-form').elements.enabled.checked=state.schedule.enabled;initialized=true;}
   const signature=JSON.stringify([state.listings,state.filters]);if(signature!==listingSignature){listingSignature=signature;const current=$('city').value;$('city').innerHTML='<option value="">Todas as cidades</option>'+state.cities.map(c=>`<option value="${E(c)}">${E(c)}</option>`).join('');$('city').value=current;renderCards();renderFavorites();syncFavoriteButtons();}
   const sources=JSON.stringify(state.sources);if(sources!==sourceSignature){sourceSignature=sources;renderSources();}
@@ -240,6 +240,20 @@ function renderUpdates(){
  $('update-banner').hidden=u.status!=='available';$('update-banner-text').textContent='A versão '+u.latest_version+' do Radar está disponível.';
  $('update-receipt').hidden=!u.last_install;$('update-receipt').textContent=u.last_install||'';
 }
+let startupSaving=false;
+function renderStartup(){
+ const s=state.startup;if(!s)return;
+ if(!startupSaving)$('startup-enabled').checked=s.enabled===true;
+ $('startup-enabled').disabled=!s.supported||s.error||state.job.busy||startupSaving;
+ $('startup-status').textContent=startupSaving?'Salvando sua preferência…':s.message;
+ $('startup-schedule').textContent=state.schedule.enabled?'As buscas automáticas estão ativadas a cada '+state.schedule.hours+' hora(s). Elas continuam quando a janela está fechada.':'As buscas automáticas estão desativadas. Em Minha busca, ative a repetição para consultar os sites em segundo plano.';
+}
+$('startup-enabled').onchange=async e=>{
+ const enabled=e.target.checked;startupSaving=true;renderStartup();
+ try{await api('startup_settings',{enabled});toast(enabled?'O Radar iniciará em segundo plano quando você entrar no Windows.':'Inicialização automática desativada.');}
+ catch(error){toast(error.message);}
+ finally{startupSaving=false;await refresh();renderStartup();}
+};
 $('update-check').onclick=()=>act('update_check',{});
 $('update-automatic').onchange=e=>act('update_settings',{automatic:e.target.checked},'Preferência de atualização salva.');
 $('update-install').onclick=()=>{if(confirm('Atualizar o Radar agora? Seus dados serão copiados para segurança. O programa fechará e abrirá novamente ao concluir.'))act('update_install',{});};

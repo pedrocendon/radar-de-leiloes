@@ -1,16 +1,16 @@
 # Radar de Leilões
 
-Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8**.
+Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8.1**.
 
 ## Baixar e instalar no Windows
 
-**[Baixar instalador do Radar 0.8 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.0/Instalar-Radar-de-Leiloes-0.8-Windows.exe)**
+**[Baixar instalador do Radar 0.8.1 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.1/Instalar-Radar-de-Leiloes-0.8.1-Windows.exe)**
 
 Compatível com **Windows 10 e 11 de 64 bits**. Abra o arquivo baixado, siga o assistente e mantenha marcada a opção de criar o ícone na área de trabalho. Não é necessário instalar Python, Node.js ou Codex.
 
 Se já usa o Radar, encerre-o pelo ícone perto do relógio antes de atualizar. Os dados locais são mantidos. Internet é necessária para as consultas e para instalar o Microsoft WebView2 quando ele ainda não estiver disponível.
 
-[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.8.0). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
+[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.8.1). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
 
 ## Para quem usa o programa
 
@@ -19,6 +19,8 @@ O instalador abre o Radar em uma janela própria, cria o atalho na área de trab
 Consulte o [guia de uso](docs/COMO-USAR.txt). Na versão 0.8, use **Atualizações → Atualizar e reiniciar** para receber as próximas versões pelo programa. Quem usa a versão 0.7 ou anterior precisa instalar a 0.8 uma única vez. [Como funciona a atualização](docs/ATUALIZACOES.md).
 
 ## Recursos
+
+- Inicialização opcional com o Windows, em segundo plano, controlada em Configurações.
 
 - Aviso automático de novas versões, download pelo programa, cópia de segurança e instalação com reinício do Radar.
 
@@ -41,7 +43,7 @@ Consulte o [guia de uso](docs/COMO-USAR.txt). Na versão 0.8, use **Atualizaçõ
 
 As consultas respeitam as restrições implementadas para cada fonte. Não há contorno de CAPTCHA, login ou bloqueios. Uma consulta que falha não significa ausência de imóveis. Os catálogos iniciais e os limites de paginação cobrem uma amostra, não todos os imóveis do país. Filtrar uma cidade não amplia o catálogo da fonte.
 
-Os conectores podem precisar de atualização quando os sites mudarem. Confira disponibilidade, datas e edital no site do leiloeiro. O computador precisa estar ligado, sem suspensão e com internet para consultar os sites. Após reiniciar o Windows, abra o Radar novamente.
+Os conectores podem precisar de atualização quando os sites mudarem. Confira disponibilidade, datas e edital no site do leiloeiro. O computador precisa estar ligado, sem suspensão e com internet para consultar os sites. Em **Configurações**, ative **Iniciar o Radar automaticamente com o Windows** para abrir em segundo plano ao entrar na sua conta.
 
 ## Executar a partir do código
 

@@ -109,7 +109,7 @@ class ServerTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError):self.request('background',token=False)
         self.assertEqual(set(self.request('background')),{'job','schedule','updates'})
         self.assertFalse(self.request('background')['updates']['supported'])
-        for action in ('update_check','update_install','update_settings'):
+        for action in ('update_check','update_install','update_settings','startup_settings'):
             with self.assertRaises(urllib.error.HTTPError) as denied:self.request(action,{},token=False)
             self.assertEqual(denied.exception.code,403)
         self.request('schedule',{'enabled':True,'hours':6})

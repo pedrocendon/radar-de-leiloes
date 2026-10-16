@@ -99,6 +99,11 @@ class Service:
         self.next_run=time.time()+self.schedule['hours']*3600 if self.schedule.get('enabled') else None
         self.closed=threading.Event()
         self.updater=None
+        self.startup=None
+
+    def startup_state(self):
+        return self.startup.state() if self.startup else dict(supported=False,enabled=False,error=False,
+            message='A inicialização com o Windows está disponível na versão instalada do Radar.')
 
     def update_state(self):
         from version import VERSION
@@ -156,14 +161,17 @@ class Service:
             if r['city']:cities.setdefault(norm(r['city']),r['city'])
         return dict(today=now()[:10],listings=listing,sources=sources,filters=config['filters'],suggested=config['suggested_filters'],
                     cities=sorted(cities.values()),
-                    job=job,schedule=schedule,updates=self.update_state(),excel=self.excel_state(),last_attempt=max((r['last_attempt'] or '' for r in rows),default=None))
+                    job=job,schedule=schedule,startup=self.startup_state(),updates=self.update_state(),excel=self.excel_state(),last_attempt=max((r['last_attempt'] or '' for r in rows),default=None))
 
     def mutate(self,action,payload):
         # Serialize starts/settings/imports. Workers read their configuration after save.
         with self.guard:
             if self.job['busy'] and self.job['kind']=='software':raise ValueError('Aguarde a atualização do Radar terminar antes de alterar os dados.')
             if self.job['busy'] and action not in ('open_excel','favorite'):raise ValueError('A atualização está em andamento. Aguarde antes de alterar as opções.')
-            if action in ('update_check','update_install','update_settings'):
+            if action=='startup_settings':
+                if not self.startup:raise ValueError('Use a versão instalada do Radar para configurar a inicialização com o Windows.')
+                self.startup.configure(payload)
+            elif action in ('update_check','update_install','update_settings'):
                 if not self.updater:raise ValueError('Use a versão instalada do Radar para atualizar pelo programa.')
                 if action=='update_check':self.updater.check()
                 elif action=='update_install':self.updater.install()

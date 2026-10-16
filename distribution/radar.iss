@@ -1,15 +1,15 @@
 ; Compile with /DPayload=... /DOutput=... /DIcon=...
 [Setup]
 #ifdef ValidationBuild
-AppId=RadarLeiloes.Validation08
-AppMutex=Local\RadarLeiloes.Validation08
+AppId=RadarLeiloes.Validation081
+AppMutex=Local\RadarLeiloes.Validation081
 #else
 AppId={{18D20C6C-E502-45E9-B94B-8415C91D369D}
 AppMutex=Local\RadarLeiloes.Desktop
 #endif
 AppName=Radar de Leilões
-AppVersion=0.8.0
-AppVerName=Radar de Leilões 0.8
+AppVersion=0.8.1
+AppVerName=Radar de Leilões 0.8.1
 DefaultDirName={localappdata}\Programs\RadarLeiloes
 DefaultGroupName=Radar de Leilões
 DisableProgramGroupPage=yes
@@ -17,7 +17,7 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 OutputDir={#Output}
-OutputBaseFilename=Instalar-Radar-de-Leiloes-0.8-Windows
+OutputBaseFilename=Instalar-Radar-de-Leiloes-0.8.1-Windows
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -26,7 +26,7 @@ UninstallDisplayIcon={app}\Radar.exe
 CloseApplications=yes
 RestartApplications=no
 UninstallDisplayName=Radar de Leilões
-VersionInfoVersion=0.8.0.0
+VersionInfoVersion=0.8.1.0
 VersionInfoDescription=Instalador do Radar de Leilões
 WizardSizePercent=110
 DisableWelcomePage=no
@@ -58,6 +58,20 @@ Filename: "{app}\Radar.exe"; Description: "Abrir o Radar de Leilões"; Flags: no
 brazilianportuguese.WelcomeLabel2=Este assistente instalará o Radar de Leilões com janela própria no seu computador.%n%nSe necessário, instalará o Microsoft WebView2; essa etapa exige internet. Você também precisa de internet para consultar os sites.%n%nA instalação será feita somente para seu usuário. Seus dados serão mantidos ao reinstalar ou desinstalar o programa.
 
 [Code]
+#ifndef ValidationBuild
+procedure RemoveStartupEntry(CurUninstallStep: TUninstallStep);
+var
+  Command: String;
+begin
+  if CurUninstallStep = usUninstall then begin
+    if RegQueryStringValue(HKCU64, 'Software\Microsoft\Windows\CurrentVersion\Run', 'RadarLeiloesAutoStart', Command) then begin
+      if Command = '"' + ExpandConstant('{app}\Radar.exe') + '" --background' then
+        RegDeleteValue(HKCU64, 'Software\Microsoft\Windows\CurrentVersion\Run', 'RadarLeiloesAutoStart');
+    end;
+  end;
+end;
+#endif
+
 function RuntimeAt(Root: Integer): Boolean;
 var
   Version: String;
@@ -94,6 +108,9 @@ end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
+#ifndef ValidationBuild
+  RemoveStartupEntry(CurUninstallStep);
+#endif
   if (CurUninstallStep = usPostUninstall) and not UninstallSilent then
     MsgBox('O programa foi removido. Seus anúncios, filtros e planilhas foram mantidos em:' + #13#10 + ExpandConstant('{localappdata}\RadarLeiloes'), mbInformation, MB_OK);
 end;
