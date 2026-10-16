@@ -15,7 +15,7 @@ Crie `work/installer-downloads` na raiz do repositório e salve os seguintes arq
 | webview2.nupkg | https://api.nuget.org/v3-flatcontainer/microsoft.web.webview2/1.0.4258.31/microsoft.web.webview2.1.0.4258.31.nupkg |
 | MicrosoftEdgeWebview2Setup.exe | https://go.microsoft.com/fwlink/p/?LinkId=2124703 |
 
-O script verifica os hashes de Python, WebView2 e do instalador auxiliar. O endereço do instalador auxiliar pode passar a fornecer uma versão nova. Nesse caso, revise sua origem e assinatura Microsoft antes de atualizar o hash esperado. Não desative a verificação.
+O script verifica os hashes de Python, XlsxWriter, WebView2 e do instalador auxiliar. O endereço do instalador auxiliar pode passar a fornecer uma versão nova. Nesse caso, revise sua origem e assinatura Microsoft antes de atualizar o hash esperado. Não desative a verificação.
 
 ## Preparar e compilar
 

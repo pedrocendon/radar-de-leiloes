@@ -10,7 +10,7 @@ Compatível com **Windows 10 e 11 de 64 bits**. Abra o arquivo baixado, siga o a
 
 Se já usa o Radar, encerre-o pelo ícone perto do relógio antes de atualizar. Os dados locais são mantidos. Internet é necessária para as consultas e para instalar o Microsoft WebView2 quando ele ainda não estiver disponível.
 
-[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.7.0). Como o repositório é privado, entre em uma conta do GitHub com acesso para baixar. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
+[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.7.0). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
 
 ## Para quem usa o programa
 
@@ -67,7 +67,7 @@ python run.py --export
 
 ```powershell
 python run.py --prepare
-python -m unittest test_monitor test_interface test_portable_excel -v
+python -m unittest test_monitor test_interface test_portable_excel test_security -v
 node test_price.cjs
 node test_locations.cjs
 ```
@@ -90,6 +90,10 @@ Node.js 18 ou superior é necessário somente para os testes JavaScript. O módu
 Este repositório contém o código, os testes e as configurações de exemplo. Planilhas pessoais, bancos de dados, favoritos, relatórios de análise, configurações em uso e sessões de acesso ficam fora do Git.
 
 Na instalação Windows, os dados ficam em `%LOCALAPPDATA%\RadarLeiloes`. No desenvolvimento, ficam nas pastas `data/` e `exports/`, ignoradas pelo Git. Faça backup da pasta de dados com o programa encerrado. Antes de compartilhar logs, retire links privados e informações pessoais.
+
+## Segurança
+
+Consulte a [revisão de segurança](docs/SEGURANCA-2026-10-16.md) e as [orientações de segurança](SECURITY.md). O instalador 0.7 foi examinado pelo Microsoft Defender sem ameaças detectadas. Ele ainda não possui assinatura digital do desenvolvedor. A revisão tem escopo limitado e não garante ausência de vulnerabilidades.
 
 ## Dependências e licenciamento
 

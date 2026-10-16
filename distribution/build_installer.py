@@ -18,9 +18,14 @@ BUILD=ROOT/'work/installer-build'
 PAYLOAD=BUILD/'payload'
 DOWNLOAD=ROOT/'work/installer-downloads'
 EXPECTED='97dae5274cc54867065e8d5a3226e48c35017ed332a0fdb0e27d5b5821961297'
-assert hashlib.sha256((DOWNLOAD/'python.zip').read_bytes()).hexdigest()==EXPECTED
-assert hashlib.sha256((DOWNLOAD/'webview2.nupkg').read_bytes()).hexdigest()=='56f7f4b8bf9aee4b8efefbbdd4f67d5f74ebd1b100ed0806da71bf76af481aa9'
-assert hashlib.sha256((DOWNLOAD/'MicrosoftEdgeWebview2Setup.exe').read_bytes()).hexdigest()=='aa38a8cfce6179b87181609b1c730a29eaf26138fc833af5759e67576770f3a3'
+def verify_input(name, expected):
+    if hashlib.sha256((DOWNLOAD/name).read_bytes()).hexdigest()!=expected:
+        raise ValueError('SHA-256 divergente: '+name)
+
+verify_input('python.zip', EXPECTED)
+verify_input('xlsxwriter-3.2.9-py3-none-any.whl', '9a5db42bc5dff014806c58a20b9eae7322a134abb6fce3c92c181bfb275ec5b3')
+verify_input('webview2.nupkg', '56f7f4b8bf9aee4b8efefbbdd4f67d5f74ebd1b100ed0806da71bf76af481aa9')
+verify_input('MicrosoftEdgeWebview2Setup.exe', 'aa38a8cfce6179b87181609b1c730a29eaf26138fc833af5759e67576770f3a3')
 for part in ['runtime','app/defaults','app/ui','licenses']:(PAYLOAD/part).mkdir(parents=True,exist_ok=True)
 with zipfile.ZipFile(DOWNLOAD/'python.zip') as archive:archive.extractall(PAYLOAD/'runtime')
 with zipfile.ZipFile(DOWNLOAD/'xlsxwriter-3.2.9-py3-none-any.whl') as archive:archive.extractall(PAYLOAD/'runtime/Lib/site-packages')
