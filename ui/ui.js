@@ -116,8 +116,10 @@ function enableLocations(){
 
 const $=id=>document.getElementById(id), E=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pages=['imoveis','favoritos','preferencias','fontes','ajuda','atualizacoes','configuracoes','novidades'];
+const WEB=document.querySelector('meta[name="radar-mode"]')?.content==='web';
 let fragment=location.hash.slice(1),token=sessionStorage.getItem('radar-token');
-if(fragment&&!pages.includes(fragment)){token=fragment;sessionStorage.setItem('radar-token',token);history.replaceState(null,'',location.pathname);}
+if(WEB)token=document.querySelector('meta[name="radar-csrf"]').content;
+else if(fragment&&!pages.includes(fragment)){token=fragment;sessionStorage.setItem('radar-token',token);history.replaceState(null,'',location.pathname);}
 const pendingFavorites=new Set();
 let refreshVersion=0;
 let state=null,listingSignature='',sourceSignature='',initialized=false,stopped=false,timer=null,toastTimer;
@@ -131,7 +133,8 @@ const activeFilters=f=>Object.entries(f).some(([k,v])=>k!=='show_pending'&&(Arra
 function toast(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
 function page(name){for(const p of pages)$(p).hidden=p!==name;document.querySelectorAll('[data-page]').forEach(b=>{b.classList.toggle('active',b.dataset.page===name);if(b.dataset.page===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});window.scrollTo(0,0);}
 async function api(action,payload){
- const r=await fetch('/api/'+action,{method:payload===undefined?'GET':'POST',headers:{'X-Radar-Token':token||'','Content-Type':'application/json'},body:payload===undefined?undefined:JSON.stringify(payload)});
+ const r=await fetch('/api/'+action,{method:payload===undefined?'GET':'POST',headers:{'X-Radar-Token':token||'','X-Radar-Web':'1','Content-Type':'application/json'},body:payload===undefined?undefined:JSON.stringify(payload)});
+ if(WEB&&r.status===401){location.replace('/login');throw Error('Entre novamente para continuar.');}
  const data=await r.json();if(!r.ok)throw Error(data.error||'Não foi possível concluir. Tente novamente.');return data;
 }
 async function act(action,payload,message){try{await api(action,payload);if(message)toast(message);await refresh();return true;}catch(e){toast(e.message);return false;}}
@@ -210,19 +213,20 @@ async function refresh(){
  try{
   const version=++refreshVersion,data=await api('state');if(version!==refreshVersion)return;
   state=data;$('connection').hidden=true;renderUpdates();renderStartup();renderNotifications();
+  if(WEB)window.dispatchEvent(new CustomEvent('radar-state',{detail:state}));
   if(!initialized){fillFilters(state.filters);$('schedule-form').elements.hours.value=state.schedule.hours;$('schedule-form').elements.enabled.checked=state.schedule.enabled;initialized=true;}
   const signature=JSON.stringify([state.listings,state.filters]);if(signature!==listingSignature){listingSignature=signature;const current=$('city').value;$('city').innerHTML='<option value="">Todas as cidades</option>'+state.cities.map(c=>`<option value="${E(c)}">${E(c)}</option>`).join('');$('city').value=current;renderCards();renderFavorites();syncFavoriteButtons();}
   const sources=JSON.stringify(state.sources);if(sources!==sourceSignature){sourceSignature=sources;renderSources();}
   $('count-total').textContent=state.listings.length;$('count-ok').textContent=state.listings.filter(r=>r.status==='ok').length;$('count-attention').textContent=state.listings.filter(r=>r.status!=='ok').length;
-  $('last-check').textContent=state.last_attempt?'Última tentativa de consulta: '+dt(state.last_attempt):'Você pode começar com os imóveis da sua planilha original.';
-  $('excel-info').textContent=state.excel.pending?state.excel.message:'Atualizada em '+dt(state.excel.updated)+'. Feche o Excel antes de buscar novidades.';
+  $('last-check').textContent=state.last_attempt?'Última tentativa de consulta: '+dt(state.last_attempt):WEB?'Sua conta está pronta. Escolha sua busca e clique em Buscar novidades.':'Você pode começar com os imóveis da sua planilha original.';
+  $('excel-info').textContent=state.excel.pending?state.excel.message:'Atualizada em '+dt(state.excel.updated)+(WEB?'. Baixe novamente para obter os dados atuais.':'. Feche o Excel antes de buscar novidades.');
   $('open-excel').disabled=!state.excel.exists;$('download-excel').disabled=!state.excel.exists;
   document.querySelectorAll('[data-mutation]').forEach(b=>b.disabled=state.job.busy);
   $('search-now').textContent=state.job.busy?'Atualização em andamento…':'Buscar novidades';
   $('job').hidden=!state.job.started;$('job').classList.toggle('working',state.job.busy);$('job').classList.toggle('error',state.job.error);$('job-text').textContent=state.job.message;
   $('elapsed').textContent=state.job.busy?'Pode levar alguns minutos.':'';
   $('schedule-info').textContent=state.schedule.enabled?'Ativada. Próxima busca: '+new Date(state.schedule.next_run*1000).toLocaleString('pt-BR'):'Desativada. As buscas acontecem quando você clicar em Buscar novidades.';
- }catch(e){$('connection').textContent=state?.updates?.status==='installing'?'O Radar está instalando a nova versão e abrirá novamente em instantes.':'Não foi possível falar com o programa. Dê dois cliques em ABRIR RADAR.vbs para reabrir. '+e.message;$('connection').hidden=false;}
+ }catch(e){$('connection').textContent=WEB?'Não foi possível conectar ao Radar. Confira a internet e tente atualizar a página. '+e.message:state?.updates?.status==='installing'?'O Radar está instalando a nova versão e abrirá novamente em instantes.':'Não foi possível falar com o programa. Dê dois cliques em ABRIR RADAR.vbs para reabrir. '+e.message;$('connection').hidden=false;}
 }
 
 function renderUpdates(){

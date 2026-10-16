@@ -20,6 +20,8 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-web/
+/web-data/
 venv/
 node_modules/
 /work/

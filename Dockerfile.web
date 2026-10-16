@@ -1,0 +1,13 @@
+FROM python:3.13-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 RADAR_PORTABLE_EXCEL=1 RADAR_WEB_DATA=/data RADAR_WEB_BIND=0.0.0.0 PORT=8080
+WORKDIR /app
+COPY requirements.txt requirements-web.txt ./
+RUN pip install --no-cache-dir -r requirements-web.txt && useradd --uid 10001 --create-home radar && mkdir /data && chown radar:radar /data
+COPY collectors.py engine.py friendly_ui.py notifications.py favorite_notifications.py favorite_changes.py portable_excel.py xlsx_export.py version.py ./
+COPY config.example.json ./
+COPY ui/ ui/
+COPY web/ web/
+USER radar
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s CMD python -c "import os,urllib.request,urllib.parse; u=os.environ['RADAR_WEB_ORIGIN']; r=urllib.request.Request('http://127.0.0.1:8080/healthz',headers={'Host':urllib.parse.urlsplit(u).netloc}); urllib.request.urlopen(r,timeout=3)"
+CMD ["python", "-m", "web.server"]

@@ -1,0 +1,37 @@
+services:
+  radar:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    environment:
+      RADAR_WEB_ORIGIN: https://${RADAR_DOMAIN:?Defina RADAR_DOMAIN no arquivo .env}
+    volumes:
+      - radar_data:/data
+    expose:
+      - "8080"
+    init: true
+    stop_grace_period: 5m
+    mem_limit: 1g
+    cpus: 1.0
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      RADAR_DOMAIN: ${RADAR_DOMAIN:?Defina RADAR_DOMAIN}
+    volumes:
+      - ./web/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - radar
+volumes:
+  radar_data:
+  caddy_data:
+  caddy_config:

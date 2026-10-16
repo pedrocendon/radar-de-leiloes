@@ -2,6 +2,12 @@
 
 Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8.4**.
 
+## Versão web para várias contas
+
+O Radar também tem uma primeira versão web com login por convite, dados separados por conta, favoritos, avisos no painel, buscas agendadas no servidor e download de Excel/CSV. [Instalação, uso e hospedagem](docs/WEB.md). Para teste local no Windows, abra `INICIAR-WEB.cmd` e depois `CRIAR-CONVITE-WEB.cmd` (requer Python). O pacote não inclui contas ou dados de usuários.
+
+A hospedagem pública ainda precisa ser configurada. A versão web usa seu próprio armazenamento; não importa automaticamente os dados do programa Windows. [Validação e limites](docs/VALIDACAO-WEB.md).
+
 ## Baixar e instalar no Windows
 
 **[Baixar instalador do Radar 0.8.4 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.4/Instalar-Radar-de-Leiloes-0.8.4-Windows.exe)**

@@ -1,0 +1,16 @@
+.desktop-only{display:none!important}
+.login-body{min-height:100vh;background:#eef3f8}
+.login-layout{max-width:1180px;min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr;margin:auto;padding:56px 28px;gap:64px;align-items:center}
+.login-intro{display:flex;flex-direction:column;gap:52px;padding:24px}
+.login-intro h1{font-size:42px;line-height:1.16;letter-spacing:-1px;max-width:550px;margin:16px 0 24px}
+.login-intro p{max-width:440px;font-size:17px;line-height:1.65}
+.login-intro .eyebrow{font-size:11px;letter-spacing:1.6px;color:#28629b}
+.login-intro ul{padding-left:20px;line-height:2.2;color:#42627b}
+.login-panel{background:white;padding:44px;border:1px solid #d7e2ec;border-radius:18px;box-shadow:0 12px 42px #1c46660c}
+.login-panel h2{font-size:28px;margin:12px 0}
+.login-panel form{margin-top:30px}.login-panel input{width:100%}.login-panel input[type=checkbox]{width:auto}
+.login-panel label{margin:16px 0}.login-panel .primary{width:100%;margin-top:12px}
+.login-footnote{font-size:12px;line-height:1.5;border-top:1px solid #e4eaf0;margin-top:30px;padding-top:22px;color:#657e94}
+#account-name{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#password-form{max-width:480px}
+@media(max-width:760px){.login-layout{display:block;padding:24px 18px}.login-intro{padding:6px;gap:20px}.login-intro h1{font-size:30px}.login-intro ul{display:none}.login-intro p{font-size:15px}.login-panel{padding:26px;margin-top:22px}.header-actions .local{display:none}.button-row{flex-wrap:wrap}}

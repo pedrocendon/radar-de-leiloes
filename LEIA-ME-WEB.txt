@@ -1,0 +1,26 @@
+RADAR DE LEILÕES — VERSÃO WEB INICIAL
+
+Cada pessoa entra com sua conta e tem suas buscas, favoritos e avisos.
+
+PARA EXPERIMENTAR NO COMPUTADOR
+1. Extraia todos os arquivos do ZIP em uma pasta.
+2. Tenha Python 3.12 ou 3.13 instalado.
+3. Abra INICIAR-WEB.cmd e deixe a janela aberta.
+4. Abra CRIAR-CONVITE-WEB.cmd e informe seu e-mail.
+5. Abra no navegador o link que aparecer e crie sua senha.
+
+Depois, use http://127.0.0.1:8080 enquanto o servidor local estiver aberto.
+O teste local funciona somente neste computador.
+
+PARA DISPONIBILIZAR NA INTERNET
+Ainda é necessário contratar/configurar hospedagem e domínio.
+Entregue a pasta e o arquivo docs/WEB.md à pessoa responsável pelo servidor.
+O pacote inclui a configuração Docker e HTTPS.
+
+Não há contas nem senhas prontas neste pacote.
+Os dados pessoais ficam em web-data; não compartilhe essa pasta.
+O aplicativo Windows e a conta web mantêm dados separados.
+Avisos web ficam dentro da conta; não há envio por e-mail ou push.
+
+Uso completo, instalação e limites: docs/WEB.md.
+O que foi testado: docs/VALIDACAO-WEB.md.

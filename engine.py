@@ -115,6 +115,11 @@ def evaluate(d,f):
     return 'corresponde',reasons or ['Sem filtros obrigatórios configurados']
 
 def similarity(d,profile):
+    if profile.get('kind')=='web':
+        reasons=[]
+        if norm(d.get('city')) in [norm(x) for x in profile.get('cities',[])]:reasons.append('Cidade escolhida na sua busca')
+        if d.get('type') in profile.get('types',[]):reasons.append('Tipo escolhido na sua busca')
+        return len(reasons),reasons
     reasons=[]
     if norm(d.get('city')) in [norm(x) for x in profile['cities']]:reasons.append('Cidade presente na seleção original')
     if d.get('type')=='apartamento':reasons.append('Mesmo tipo dos 9 imóveis selecionados')
@@ -158,8 +163,8 @@ def validate_config(c):
         if not isinstance(c[k],int) or not 1<=c[k]<=100:raise ValueError(k+' deve estar entre 1 e 100')
     return c
 
-def run(base,notify=lambda x:None):
-    base=Path(base);config=validate_config(load(base/'config.json'));store=Store(base/'data/monitor.sqlite');seeds=load(base/'references.json');client=Client()
+def run(base,notify=lambda x:None,client=None):
+    base=Path(base);config=validate_config(load(base/'config.json'));store=Store(base/'data/monitor.sqlite');seeds=load(base/'references.json');client=client or Client()
     known={r['url'] for r in store.rows()}
     for s in seeds:
         if canonical(s['url']) not in known:store.put(s['source'],s['url'],s,'referencia_planilha','Ainda não confirmado no site',config.get('property_overrides'))

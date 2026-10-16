@@ -2,6 +2,8 @@
 
 O Radar é um aplicativo local para Windows. Seu serviço deve continuar acessível somente em `127.0.0.1`; não o exponha à rede ou à internet.
 
+A edição web tem uma entrada separada (`python -m web.server`), autenticação por conta e armazenamento próprio. Use as instruções de [hospedagem e segurança da web](docs/WEB.md). Não publique o servidor desktop `friendly_ui.py`. A revisão antiga abaixo trata do Windows; os novos controles e limites estão em [VALIDACAO-WEB.md](docs/VALIDACAO-WEB.md).
+
 Consulte a [revisão de 16/10/2026](docs/SEGURANCA-2026-10-16.md), com escopo, evidências e limitações da versão 0.7.
 
 ## Relatar um problema
