@@ -1,0 +1,93 @@
+RADAR DE LEILÕES 0.7 — WINDOWS 10 E 11, 64 BITS
+
+INSTALAR
+Abra Instalar-Radar-de-Leiloes-0.7-Windows.exe e siga o assistente.
+A opção de criar um ícone na área de trabalho já vem marcada.
+Ao concluir, abra o Radar pelo ícone na área de trabalho ou no menu Iniciar.
+O Radar abre em uma janela própria. Seus dados ficam neste computador.
+O instalador verifica o Microsoft WebView2 e o instala quando necessário.
+Essa instalação do componente exige internet. Mantenha o Windows atualizado.
+Não é necessário instalar Python, Node.js ou Codex.
+
+ABRIR, MINIMIZAR E FECHAR
+Dois cliques no atalho abrem a janela. Se já estiver aberta, ela volta à frente.
+Minimizar mantém a janela na barra de tarefas.
+O X fecha apenas a janela: o Radar continua no ícone perto do relógio.
+O botão Manter em segundo plano faz a mesma coisa.
+Para parar as buscas e sair, use Encerrar programa ou Opções > Encerrar o Radar.
+Links de anúncios, editais e sites continuam abrindo no navegador padrão.
+
+PRIMEIRA BUSCA
+1. Abra Minha busca e preencha suas preferências. Campos vazios não restringem.
+2. Clique em Salvar minha busca.
+3. Em Imóveis acompanhados, clique em Buscar novidades.
+4. Aguarde a conclusão e consulte os anúncios ou clique em Abrir planilha.
+Você pode adicionar links de anúncios em Sites consultados.
+
+A instalação nova começa sem anúncios, sem agenda automática e sem preferências
+pessoais de outro usuário. Os catálogos iniciais incluem Mega (apartamentos),
+Saraiva (eventos) e Zuk (Espírito Santo). Os filtros não ampliam esses catálogos.
+A busca cobre uma amostra das fontes. Top e Krobel exigem conferência assistida.
+Superbid não tem consulta automática. Falhas não significam ausência de imóveis.
+
+FAVORITOS
+Clique em ☆ Favoritar no cartão de um anúncio ou na janela Ver detalhes.
+Abra Favoritos no menu para ver sua seleção, com os mais recentes primeiro.
+Use Localizar nos favoritos para procurar por cidade, bairro, nome ou leiloeiro.
+Os filtros de Minha busca não escondem os favoritos.
+Para retirar um anúncio da seleção, clique em ★ Favoritado. Ele continua na lista
+de imóveis acompanhados. Você também pode favoritar durante uma busca.
+Os favoritos ficam salvos neste computador e são mantidos ao fechar o Radar,
+consultar novamente os sites ou instalar uma atualização do programa.
+Favoritar não confirma a disponibilidade do imóvel: confira a situação e as datas.
+
+PLANILHA
+A planilha é atualizada após cada busca. Feche o arquivo no Excel antes de buscar.
+Atualizar planilha usa os dados já salvos. Baixar cópia preserva suas anotações
+em um arquivo separado. Para visualizar o XLSX, é necessário um aplicativo
+compatível, como Excel ou LibreOffice; gerar o arquivo não exige esses aplicativos.
+Ao clicar em Baixar cópia, escolha a pasta e o nome na janela Salvar.
+
+BUSCAS AUTOMÁTICAS
+Ative a repetição em Minha busca. O computador precisa estar ligado e o Radar
+em execução. Depois de reiniciar o Windows, abra o Radar novamente.
+Para encerrar também as buscas, use Encerrar programa dentro do Radar.
+
+ÍCONE PERTO DO RELÓGIO
+Enquanto o Radar estiver aberto, um ícone aparece na área de notificações
+da barra de tarefas. Se estiver oculto, clique na seta perto do relógio.
+Você pode arrastá-lo para a parte visível da barra, se desejar.
+
+Passe o mouse para ver a situação e a próxima busca. Clique com o botão direito:
+- Abrir Radar de Leilões: mostra a janela do programa. Dois cliques no ícone também abrem.
+- Ver situação do Radar: mostra uma janela com a situação e a próxima consulta.
+- Buscar novidades agora: inicia uma consulta manual.
+- Ativar/Pausar buscas automáticas: mantém o intervalo configurado em Minha busca.
+- Encerrar o Radar: encerra o programa e as buscas; seus dados ficam salvos.
+
+O marcador do ícone fica azul durante uma atualização, verde com a agenda
+ativada, cinza quando a agenda está desativada e laranja se houver erro ou
+não for possível confirmar o estado do programa. O texto descreve a situação.
+Durante uma atualização, aguarde a conclusão antes de encerrar ou alterar a agenda.
+Fechar a janela principal ou a janela de situação mantém o programa em segundo plano.
+O Radar não inicia sozinho com o Windows: abra-o para retomar a agenda.
+
+DADOS E ATUALIZAÇÕES
+Os dados ficam em %LOCALAPPDATA%\RadarLeiloes.
+O menu Iniciar > Radar de Leilões > Meus dados abre essa pasta.
+Para fazer uma cópia de segurança, encerre o programa e copie a pasta inteira.
+Para restaurar em outra instalação, encerre o Radar e restaure essa pasta.
+Reinstalar ou desinstalar preserva os anúncios, filtros e planilhas.
+Encerre o programa antes de instalar atualizações.
+Desinstale em Configurações do Windows > Aplicativos > Radar de Leilões.
+
+O instalador não tem certificado de assinatura digital. Dependendo das políticas
+do Windows, ele pode exibir um aviso de editor desconhecido ou ser bloqueado.
+Em computadores gerenciados, solicite a liberação à equipe responsável.
+
+SUPORTE
+Se o Radar não abrir, execute o instalador novamente para reparar os arquivos.
+Se a janela mostrar um erro, use Tentar novamente. Se pedir o WebView2,
+conecte-se à internet, encerre pelo menu Opções e reinstale o Radar.
+Os registros de erro ficam em %LOCALAPPDATA%\RadarLeiloes\data.
+Nenhuma senha de leiloeiro ou conta de serviço é necessária para usar o Radar.
