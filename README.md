@@ -2,6 +2,16 @@
 
 Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.7**.
 
+## Baixar e instalar no Windows
+
+**[Baixar instalador do Radar 0.7 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.7.0/Instalar-Radar-de-Leiloes-0.7-Windows.exe)**
+
+Compatível com **Windows 10 e 11 de 64 bits**. Abra o arquivo baixado, siga o assistente e mantenha marcada a opção de criar o ícone na área de trabalho. Não é necessário instalar Python, Node.js ou Codex.
+
+Se já usa o Radar, encerre-o pelo ícone perto do relógio antes de atualizar. Os dados locais são mantidos. Internet é necessária para as consultas e para instalar o Microsoft WebView2 quando ele ainda não estiver disponível.
+
+[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.7.0). Como o repositório é privado, entre em uma conta do GitHub com acesso para baixar. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
+
 ## Para quem usa o programa
 
 O instalador abre o Radar em uma janela própria, cria o atalho na área de trabalho e mantém um ícone perto do relógio. A seção **Minha busca** configura os filtros; **Favoritos** reúne os anúncios selecionados. A planilha Excel é atualizada ao concluir uma busca.
