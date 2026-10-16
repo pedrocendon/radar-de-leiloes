@@ -38,7 +38,7 @@ class StartupTests(unittest.TestCase):
         self.assertFalse(self.startup.state()['enabled']);self.assertEqual(self.reg.writes,0)
     def test_enable_quotes_path_and_uses_background(self):
         self.assertTrue(self.startup.configure({'enabled':True})['enabled'])
-        self.assertEqual(self.reg.values[VALUE_NAME],('"'+str(self.exe)+'" --background',self.reg.REG_SZ))
+        self.assertEqual(self.reg.values[VALUE_NAME],('"'+str(self.exe.resolve())+'" --background',self.reg.REG_SZ))
     def test_disable_is_idempotent_and_preserves_other_apps(self):
         self.startup.configure({'enabled':True});self.startup.configure({'enabled':False});self.startup.configure({'enabled':False})
         self.assertEqual(self.reg.values,{'AnotherApp':('leave alone',1)})
