@@ -2,6 +2,14 @@
 
 Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8.5**.
 
+## Apresentação em vídeo
+
+Conheça o Radar em **2 minutos e 32 segundos**, com narração em português. Veja como configurar a busca, consultar os imóveis, abrir a planilha e acompanhar as buscas automáticas na janela do Windows.
+
+https://github.com/user-attachments/assets/a84979f8-3625-4bd6-aa5a-be02677f37dc
+
+*Demonstração gravada em outubro de 2026. Algumas telas e recursos podem variar na versão atual; os anúncios exibidos são exemplos da gravação.*
+
 ## Versão web para várias contas
 
 O Radar também tem uma primeira versão web com login por convite, dados separados por conta, favoritos, avisos no painel, buscas agendadas no servidor e download de Excel/CSV. [Instalação, uso e hospedagem](docs/WEB.md). Para teste local no Windows, abra `INICIAR-WEB.cmd` e depois `CRIAR-CONVITE-WEB.cmd` (requer Python). O pacote não inclui contas ou dados de usuários.
