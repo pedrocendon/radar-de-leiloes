@@ -1,15 +1,20 @@
 """Security boundary checks using only temporary files and loopback servers."""
 import http.client
 import json
+import os
+import sqlite3
+from contextlib import closing
 from pathlib import Path
 import tempfile
 import threading
 import unittest
+import urllib.error
+from unittest.mock import patch
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from collectors import Client, CollectError
-from engine import safe_cell
-from friendly_ui import make_server
+from engine import safe_cell,connect_database
+from friendly_ui import make_server,local_health
 
 
 class LocalSecurityTests(unittest.TestCase):
@@ -72,8 +77,67 @@ class LocalSecurityTests(unittest.TestCase):
         headers = {'X-Radar-Token': self.server.token, 'Content-Length': '1000001'}
         self.assertEqual(self.request('/api/import', 'POST', headers)[0], 413)
 
+    def test_local_session_health_and_proxy_bypass(self):
+        # A broken environment proxy must not see the local session token.
+        with patch.dict(os.environ,{'http_proxy':'http://127.0.0.1:1','HTTP_PROXY':'http://127.0.0.1:1','no_proxy':'','NO_PROXY':''}):
+            result=local_health(f'http://127.0.0.1:{self.server.server_port}/',self.server.token)
+        self.assertEqual(result['base'],str(self.server.service.base))
+
+    def test_local_session_rejects_ambiguous_urls_before_network(self):
+        bad=['file:///etc/passwd','http://example.test/','http://localhost:1234/',
+             'http://127.0.0.1:1234/elsewhere/','http://user@127.0.0.1:1234/',
+             'http://127.0.0.1:1234/?next=','http://127.0.0.1:1234/#fragment',
+             'http://127.0.0.1:0/','http://127.0.0.1:65536/','http://127.0.0.1:1234/\n']
+        with patch('friendly_ui.urllib.request.build_opener') as opener:
+            for url in bad:
+                with self.subTest(url=url),self.assertRaises(ValueError):local_health(url,self.server.token)
+            for token in ('short','a'*129,'a'*32+'\r\nHeader: injected',None):
+                with self.subTest(token_type=type(token).__name__),self.assertRaises(ValueError):
+                    local_health('http://127.0.0.1:1234/',token)
+            opener.assert_not_called()
+
 
 class DataSecurityTests(unittest.TestCase):
+    def test_database_defensive_mode_blocks_schema_corruption(self):
+        with closing(connect_database(':memory:')) as db:
+            self.assertTrue(db.getconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE))
+            self.assertFalse(db.getconfig(sqlite3.SQLITE_DBCONFIG_TRUSTED_SCHEMA))
+            self.assertFalse(db.getconfig(sqlite3.SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION))
+            db.execute('CREATE TABLE safe(value TEXT)')
+            db.execute('PRAGMA writable_schema=ON')
+            with self.assertRaises(sqlite3.DatabaseError):db.execute('DELETE FROM sqlite_master')
+            hostile="'); DROP TABLE safe; --"
+            db.execute('INSERT INTO safe VALUES(?)',(hostile,))
+            self.assertEqual(db.execute('SELECT value FROM safe').fetchone()[0],hostile)
+
+    def test_session_redirect_never_forwards_token(self):
+        hits=[]
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self,*args):pass
+            def do_GET(self):
+                hits.append(self.path)
+                self.send_response(302);self.send_header('Location','/token-target');self.end_headers()
+        server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        try:
+            with self.assertRaises(urllib.error.HTTPError):
+                local_health(f'http://127.0.0.1:{server.server_port}/','x'*43)
+            self.assertEqual(hits,['/api/health'])
+        finally:server.shutdown();server.server_close();thread.join()
+
+    def test_session_response_size_is_bounded(self):
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self,*args):pass
+            def do_GET(self):
+                raw=b' '*16385
+                self.send_response(200);self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)
+        server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        try:
+            with self.assertRaisesRegex(ValueError,'muito grande'):
+                local_health(f'http://127.0.0.1:{server.server_port}/','x'*43)
+        finally:server.shutdown();server.server_close();thread.join()
+
     def test_csv_untrusted_formulas_are_neutralized(self):
         for text in ['=1+1', '+SUM(1)', '-1+2', '@SUM(1)', ' \t=HYPERLINK("https://example.test")', '\r\n=1+1']:
             self.assertTrue(safe_cell(text).startswith("'"))

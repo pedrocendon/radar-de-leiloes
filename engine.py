@@ -9,6 +9,24 @@ def dump(x):return json.dumps(x,ensure_ascii=False,sort_keys=True)
 def load(path):return json.loads(Path(path).read_text(encoding='utf-8-sig'))
 def save(path,x):
     p=Path(path);tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(x,ensure_ascii=False,indent=2),encoding='utf-8');tmp.replace(p)
+
+def connect_database(path):
+    if not hasattr(sqlite3.Connection,'setconfig'):
+        raise RuntimeError('Use Python 3.12 ou superior para ativar as proteções do banco de dados.')
+    db=sqlite3.connect(path,timeout=30)
+    try:
+        # The application supplies SQL and never imports third-party databases.
+        # Defense in depth for bundled SQLite versions: disable dangerous schema
+        # changes and extension loading before preparing any statement.
+        db.setconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE,True)
+        db.setconfig(sqlite3.SQLITE_DBCONFIG_TRUSTED_SCHEMA,False)
+        db.setconfig(sqlite3.SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION,False)
+        db.row_factory=sqlite3.Row
+        return db
+    except Exception:
+        db.close()
+        raise
+
 class Store:
     def __init__(self,path):
         self.path=Path(path);self.path.parent.mkdir(parents=True,exist_ok=True)
@@ -24,7 +42,7 @@ class Store:
         ''')
     @contextmanager
     def connect(self):
-        db=sqlite3.connect(self.path,timeout=30);db.row_factory=sqlite3.Row
+        db=connect_database(self.path)
         try:
             with db:yield db
         finally:db.close()

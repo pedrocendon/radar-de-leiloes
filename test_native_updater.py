@@ -89,6 +89,10 @@ class NativeUpdateTests(unittest.TestCase):
         # Never use a production AppId here: use /DValidationBuild when compiling.
         setup=self.root/'instalador.exe';shutil.copy2(os.environ['RADAR_TEST_INSTALLER'],setup)
         data=self.root/'user-data';data.mkdir();(data/'favorite-marker.txt').write_text('keep')
+        from engine import Store
+        saved=Store(data/'data/monitor.sqlite')
+        saved.put('mega','https://example.test/preserved',dict(title='Favorito preservado',origin='site',stages=[]))
+        saved.set_favorite(saved.rows()[0]['id'],True)
         result=self.execute(setup)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
         self.assertEqual((data/'favorite-marker.txt').read_text(),'keep')
@@ -96,5 +100,9 @@ class NativeUpdateTests(unittest.TestCase):
                               '--self-test','--data-dir',str(data)],capture_output=True,text=True,timeout=60)
         self.assertEqual(check.returncode,0,check.stdout+check.stderr)
         self.assertTrue(json.loads(check.stdout)['excel'])
+        self.assertEqual(json.loads(check.stdout)['listings'],1)
+        self.assertTrue(Store(data/'data/monitor.sqlite').rows()[0]['favorited_at'])
+        runtime=subprocess.run([str(self.install/'runtime/python.exe'),'-c','import sqlite3;print(sqlite3.sqlite_version)'],capture_output=True,text=True,check=True)
+        self.assertEqual(runtime.stdout.strip(),'3.54.1')
 
 if __name__=='__main__':unittest.main()

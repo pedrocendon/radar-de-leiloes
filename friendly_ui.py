@@ -14,7 +14,7 @@ from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
-from collectors import now, canonical, browser_text, norm
+from collectors import now, canonical, browser_text, norm, NoRedirect
 from engine import Store, load, save, export, evaluate, similarity, validate_config
 
 STATUS = {'ok':'Leitura concluída','parcial':'Faltam informações','assistida':'Conferido pelo navegador',
@@ -313,15 +313,29 @@ def make_server(base,port=0):
     return server
 
 
+def local_health(url,token):
+    """Never forward a session token through a proxy or an HTTP redirect."""
+    if not isinstance(url,str) or not re.fullmatch(r'http://127\.0\.0\.1:[0-9]{1,5}/',url):
+        raise ValueError('Sessão local inválida.')
+    if not 1<=urlsplit(url).port<=65535:
+        raise ValueError('Porta da sessão inválida.')
+    if not isinstance(token,str) or not re.fullmatch(r'[A-Za-z0-9_-]{32,128}',token):
+        raise ValueError('Chave da sessão inválida.')
+    opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),NoRedirect)
+    request=urllib.request.Request(url+'api/health',headers={'X-Radar-Token':token})
+    with opener.open(request,timeout=1) as response:raw=response.read(16385)
+    if len(raw)>16384:raise ValueError('Resposta local muito grande.')
+    result=json.loads(raw)
+    if not isinstance(result,dict):raise ValueError('Resposta local inválida.')
+    return result
+
+
 def launch(base,open_browser=True,port=0,background=None):
     base=Path(base).resolve();session=base/'data/sessao-interface.json'
     if session.exists():
         try:
             previous=load(session);url=previous['url']
-            parsed=urlsplit(url)
-            if parsed.hostname!='127.0.0.1' or parsed.scheme!='http':raise ValueError('Invalid local session')
-            req=urllib.request.Request(url+'api/health',headers={'X-Radar-Token':previous['token']})
-            with urllib.request.urlopen(req,timeout=1) as response:existing=json.load(response)
+            existing=local_health(url,previous['token'])
             if existing.get('base')==str(base):
                 if open_browser:webbrowser.open(url+'#'+previous['token'])
                 return

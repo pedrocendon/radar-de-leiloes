@@ -4,7 +4,7 @@ O Radar é um aplicativo local para Windows. Seu serviço deve continuar acessí
 
 A edição web tem uma entrada separada (`python -m web.server`), autenticação por conta e armazenamento próprio. Use as instruções de [hospedagem e segurança da web](docs/WEB.md). Não publique o servidor desktop `friendly_ui.py`. A revisão antiga abaixo trata do Windows; os novos controles e limites estão em [VALIDACAO-WEB.md](docs/VALIDACAO-WEB.md).
 
-Consulte a [revisão de 16/10/2026](docs/SEGURANCA-2026-10-16.md), com escopo, evidências e limitações da versão 0.7.
+Consulte a [revisão de 19/10/2026](docs/SEGURANCA-2026-10-19.md), com os achados e correções da versão 0.8.5, testes e limitações. A [revisão de 16/10/2026](docs/SEGURANCA-2026-10-16.md) registra a avaliação anterior da versão 0.7.
 
 ## Relatar um problema
 
@@ -21,3 +21,5 @@ Solicite um canal privado ao mantenedor antes de enviar detalhes de uma vulnerab
 O instalador 0.7 não tem assinatura digital do desenvolvedor. Nenhuma revisão garante ausência de vulnerabilidades.
 
 O instalador público 0.8.4 também permanece sem assinatura. O processo para assinar as próximas versões está preparado e depende da contratação/configuração de um certificado em nome da empresa. [Situação e limites do SmartScreen](docs/ASSINATURA-WINDOWS.md).
+
+A versão 0.8.5 atualiza o SQLite e reforça a sessão local e o banco de dados. Ela também continua sem assinatura Authenticode do Radar; a revisão não elimina automaticamente os avisos do Windows.

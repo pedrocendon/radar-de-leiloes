@@ -64,11 +64,8 @@ def open_existing(base,open_browser):
     for _ in range(60):
         try:
             session=json.loads((base/'data/sessao-interface.json').read_text(encoding='utf-8'))
-            from urllib.parse import urlsplit
-            parsed=urlsplit(session['url'])
-            if parsed.scheme!='http' or parsed.hostname!='127.0.0.1':raise ValueError('Sessão local inválida')
-            request=urllib.request.Request(session['url']+'api/health',headers={'X-Radar-Token':session['token']})
-            with urllib.request.urlopen(request,timeout=1) as response:health=json.load(response)
+            from friendly_ui import local_health
+            health=local_health(session['url'],session['token'])
             if health.get('base')==str(base.resolve()):
                 if open_browser:
                     subprocess.run([str(APP.parent/'RadarTray.exe'),'--show',str(base/'data/sessao-interface.json')],

@@ -75,10 +75,10 @@ class StartupTests(unittest.TestCase):
             self.assertEqual(service.next_run,130 if enabled else 9999)
     def test_existing_hidden_instance_does_not_open_window(self):
         (self.base/'data').mkdir();(self.base/'data/sessao-interface.json').write_text(json.dumps({'url':'http://127.0.0.1:12345/','token':'test'}))
-        response=Mock();response.__enter__=Mock(return_value=response);response.__exit__=Mock(return_value=False)
-        with patch.object(desktop.urllib.request,'urlopen',return_value=response),patch.object(desktop.json,'load',return_value={'base':str(self.base.resolve())}),patch.object(desktop.subprocess,'run') as show:
+        with patch('friendly_ui.local_health',return_value={'base':str(self.base.resolve())}) as health,patch.object(desktop.subprocess,'run') as show:
             desktop.open_existing(self.base,False);show.assert_not_called()
             desktop.open_existing(self.base,True);self.assertEqual(show.call_args.args[0][1],'--show')
+            health.assert_called_with('http://127.0.0.1:12345/','test')
 
     @unittest.skipUnless(os.name=='nt','Windows launcher')
     def test_native_launcher_only_background_switch(self):

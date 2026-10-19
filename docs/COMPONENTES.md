@@ -5,6 +5,7 @@ O código do Radar ainda não possui uma licença de código aberto escolhida pe
 | Componente | Uso | Referência |
 | --- | --- | --- |
 | Python 3.13.16 | Execução do programa instalado | https://www.python.org/downloads/ |
+| SQLite 3.54.1 | Banco de dados do instalador 0.8.5; DLL oficial substitui 3.50.4 do Python | https://sqlite.org/download.html |
 | XlsxWriter 3.2.9 | Exportação Excel portátil | https://pypi.org/project/XlsxWriter/3.2.9/ |
 | Microsoft WebView2 SDK 1.0.4258.31 | Janela Windows | https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.4258.31 |
 | Microsoft WebView2 Runtime | Exibição da interface | https://developer.microsoft.com/microsoft-edge/webview2/ |

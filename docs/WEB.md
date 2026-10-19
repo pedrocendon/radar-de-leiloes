@@ -36,10 +36,13 @@ Alternativa pelo terminal, na pasta do projeto:
 
 ```powershell
 py -3 -m venv .venv-web
-.venv-web\Scripts\python -m pip install -r requirements-web.txt
+.venv-web\Scripts\python -m pip --isolated --disable-pip-version-check install --only-binary=:all: --index-url https://pypi.org/simple pip==26.2
+.venv-web\Scripts\python -m pip --isolated install --only-binary=:all: --index-url https://pypi.org/simple -r requirements-web.txt
 .venv-web\Scripts\python -m web.manage invite pessoa@exemplo.com
 .venv-web\Scripts\python -m web.server
 ```
+
+Se já existia um ambiente `.venv-web`, execute também os dois comandos de instalação acima para atualizar as ferramentas e dependências. O inicializador verifica a versão do pip antes de iniciar. A revisão de 19/10/2026 encontrou avisos no pip 25.0.1 e verificou o pip 26.2; consulte [a revisão de segurança](SEGURANCA-2026-10-19.md).
 
 ## Publicar em um servidor — para o administrador
 

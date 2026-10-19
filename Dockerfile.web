@@ -2,7 +2,7 @@ FROM python:3.13-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 RADAR_PORTABLE_EXCEL=1 RADAR_WEB_DATA=/data RADAR_WEB_BIND=0.0.0.0 PORT=8080
 WORKDIR /app
 COPY requirements.txt requirements-web.txt ./
-RUN pip install --no-cache-dir -r requirements-web.txt && useradd --uid 10001 --create-home radar && mkdir /data && chown radar:radar /data
+RUN python -m pip --isolated --disable-pip-version-check install --no-cache-dir --only-binary=:all: --index-url https://pypi.org/simple pip==26.2 && python -m pip --isolated install --no-cache-dir --only-binary=:all: --index-url https://pypi.org/simple -r requirements-web.txt && useradd --uid 10001 --create-home radar && mkdir /data && chown radar:radar /data
 COPY collectors.py engine.py friendly_ui.py notifications.py favorite_notifications.py favorite_changes.py portable_excel.py xlsx_export.py version.py ./
 COPY config.example.json ./
 COPY ui/ ui/

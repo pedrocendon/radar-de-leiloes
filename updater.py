@@ -110,9 +110,10 @@ def download(candidate, folder, progress, opener=open_url):
 
 def backup_data(base, destination):
     """Snapshot SQLite through its backup API, then archive user settings, excluding session tokens."""
+    from engine import connect_database
     db_copy = destination.with_suffix('.sqlite')
     try:
-        with closing(sqlite3.connect(base / 'data/monitor.sqlite')) as source, closing(sqlite3.connect(db_copy)) as target:
+        with closing(connect_database(base / 'data/monitor.sqlite')) as source, closing(connect_database(db_copy)) as target:
             source.backup(target)
         with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED) as archive:
             archive.write(db_copy, 'data/monitor.sqlite')

@@ -13,7 +13,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pip --isolated --disable-pip-version-check install --only-binary=:all: --index-url https://pypi.org/simple pip==26.2
+      - run: python -m pip --isolated install --only-binary=:all: --index-url https://pypi.org/simple -r requirements-dev.txt
       - run: python run.py --prepare
       - run: python -m unittest test_monitor test_interface test_portable_excel test_security test_updater test_native_updater test_startup test_notifications test_favorite_notifications test_favorite_changes -v
       - run: node test_price.cjs
@@ -25,7 +26,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: python -m pip install -r requirements-web.txt
+      - run: python -m pip --isolated --disable-pip-version-check install --only-binary=:all: --index-url https://pypi.org/simple pip==26.2
+      - run: python -m pip --isolated install --only-binary=:all: --index-url https://pypi.org/simple -r requirements-web.txt
       - run: python -m unittest test_web -v
       - run: docker compose -f compose.web.yml config --quiet
         env:
@@ -37,3 +39,12 @@ jobs:
         run: docker logs radar-web-test
       - if: always()
         run: docker rm -f radar-web-test
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip --isolated --disable-pip-version-check install --only-binary=:all: --index-url https://pypi.org/simple pip==26.2 pip-audit==2.10.1
+      - run: python -m pip_audit -r requirements-web.txt -r requirements-dev.txt

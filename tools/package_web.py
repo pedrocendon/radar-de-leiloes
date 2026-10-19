@@ -8,7 +8,7 @@ FILES=['requirements.txt','requirements-web.txt','Dockerfile.web','.dockerignore
        'INICIAR-WEB.cmd','CRIAR-CONVITE-WEB.cmd','LEIA-ME-WEB.txt',
        'collectors.py','engine.py','friendly_ui.py','app.py','notifications.py','favorite_notifications.py',
        'favorite_changes.py','portable_excel.py','xlsx_export.py','version.py','config.example.json',
-       'ui/index.html','ui/ui.js','ui/style.css','docs/WEB.md','docs/VALIDACAO-WEB.md','test_web.py',
+       'ui/index.html','ui/ui.js','ui/style.css','docs/WEB.md','docs/VALIDACAO-WEB.md','docs/SEGURANCA-2026-10-19.md','test_web.py',
        'web/__init__.py','web/accounts.py','web/network.py','web/runtime.py','web/server.py','web/manage.py',
        'web/index.html','web/login.html','web/login.js','web/web.js','web/web.css','web/Caddyfile','tools/package_web.py']
 

@@ -7,6 +7,7 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 from werkzeug.security import generate_password_hash, check_password_hash
+from engine import connect_database
 
 SESSION_SECONDS=12*3600
 
@@ -42,7 +43,7 @@ class Accounts:
 
     @contextmanager
     def db(self):
-        db=sqlite3.connect(self.path,timeout=30);db.row_factory=sqlite3.Row
+        db=connect_database(self.path)
         try:
             with db:yield db
         finally:db.close()

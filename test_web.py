@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import tempfile
 import time
 import unittest
@@ -51,6 +52,12 @@ class WebTests(unittest.TestCase):
             self.assertEqual(load(self.runtime.get(uid).base/'references.json'),[])
             self.assertFalse(state['schedule']['enabled'])
             self.assertEqual(state['filters']['cities'],[])
+
+    def test_accounts_database_uses_defensive_mode(self):
+        with self.accounts.db() as db:
+            self.assertTrue(db.getconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE))
+            self.assertFalse(db.getconfig(sqlite3.SQLITE_DBCONFIG_TRUSTED_SCHEMA))
+            self.assertFalse(db.getconfig(sqlite3.SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION))
 
     def test_filters_and_files_are_isolated(self):
         self.assertEqual(self.post(self.a,'/api/filters',{'cities':'São Paulo','max_price':'600.000,00'}).status_code,200)

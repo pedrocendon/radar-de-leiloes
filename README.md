@@ -1,6 +1,6 @@
 # Radar de Leilões
 
-Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8.4**.
+Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alterações e organiza favoritos. Versão atual: **0.8.5**.
 
 ## Versão web para várias contas
 
@@ -10,13 +10,13 @@ A hospedagem pública ainda precisa ser configurada. A versão web usa seu próp
 
 ## Baixar e instalar no Windows
 
-**[Baixar instalador do Radar 0.8.4 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.4/Instalar-Radar-de-Leiloes-0.8.4-Windows.exe)**
+**[Baixar instalador do Radar 0.8.5 (.exe)](https://github.com/pedrocendon/radar-de-leiloes/releases/download/v0.8.5/Instalar-Radar-de-Leiloes-0.8.5-Windows.exe)**
 
 Compatível com **Windows 10 e 11 de 64 bits**. Abra o arquivo baixado, siga o assistente e mantenha marcada a opção de criar o ícone na área de trabalho. Não é necessário instalar Python, Node.js ou Codex.
 
 Se já usa o Radar, encerre-o pelo ícone perto do relógio antes de atualizar. Os dados locais são mantidos. Internet é necessária para as consultas e para instalar o Microsoft WebView2 quando ele ainda não estiver disponível.
 
-[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.8.4). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
+[Ver a versão e o guia de instalação](https://github.com/pedrocendon/radar-de-leiloes/releases/tag/v0.8.5). O download é público. Os arquivos “Source code” são destinados ao desenvolvimento; para instalar, escolha o arquivo **.exe**.
 
 ## Para quem usa o programa
 
@@ -59,11 +59,12 @@ Os conectores podem precisar de atualização quando os sites mudarem. Confira d
 
 ## Executar a partir do código
 
-Requisitos: Python 3.11 ou superior. Para desenvolvimento:
+Requisitos: Python 3.12 ou superior, necessário para as proteções do SQLite. O instalador Windows já inclui seu próprio Python. Para desenvolvimento:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip --isolated --disable-pip-version-check install --only-binary=:all: --index-url https://pypi.org/simple pip==26.2
+.\.venv\Scripts\python.exe -m pip --isolated install --only-binary=:all: --index-url https://pypi.org/simple -r requirements-dev.txt
 .\.venv\Scripts\python.exe run.py
 ```
 
@@ -109,7 +110,7 @@ Na instalação Windows, os dados ficam em `%LOCALAPPDATA%\RadarLeiloes`. No des
 
 ## Segurança
 
-Consulte a [revisão de segurança](docs/SEGURANCA-2026-10-16.md) e as [orientações de segurança](SECURITY.md). O instalador 0.8 foi examinado pelo Microsoft Defender sem ameaças detectadas. Ele ainda não possui assinatura digital do desenvolvedor. A revisão tem escopo limitado e não garante ausência de vulnerabilidades.
+Consulte a [revisão de segurança](docs/SEGURANCA-2026-10-19.md) e as [orientações de segurança](SECURITY.md). A versão 0.8.5 atualiza o SQLite e reforça a sessão local e as conexões ao banco. O instalador foi examinado pelo Microsoft Defender sem ameaças detectadas. Ele ainda não possui assinatura digital do desenvolvedor. A revisão tem escopo limitado e não garante ausência de vulnerabilidades.
 
 ## Dependências e licenciamento
 

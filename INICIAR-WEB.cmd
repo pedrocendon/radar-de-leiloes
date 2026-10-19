@@ -4,7 +4,15 @@ cd /d "%~dp0"
 if not exist ".venv-web\Scripts\python.exe" (
   py -3 -m venv .venv-web
   if errorlevel 1 goto :error
-  ".venv-web\Scripts\python.exe" -m pip install -r requirements-web.txt
+)
+".venv-web\Scripts\python.exe" -c "from importlib.metadata import version; import sys; sys.exit(tuple(int(x) for x in version('pip').split('.')[:2]) < (26,2))" >nul 2>&1
+if errorlevel 1 (
+  ".venv-web\Scripts\python.exe" -m pip --isolated --disable-pip-version-check install --only-binary=:all: --index-url https://pypi.org/simple pip==26.2
+  if errorlevel 1 goto :error
+)
+".venv-web\Scripts\python.exe" -c "from importlib.metadata import version; import sys; sys.exit(any(version(n)!=v for n,v in [('Flask','3.1.3'),('Werkzeug','3.1.9'),('waitress','3.0.2'),('XlsxWriter','3.2.9')]))" >nul 2>&1
+if errorlevel 1 (
+  ".venv-web\Scripts\python.exe" -m pip --isolated --disable-pip-version-check install --only-binary=:all: --index-url https://pypi.org/simple -r requirements-web.txt
   if errorlevel 1 goto :error
 )
 echo Radar web: http://127.0.0.1:8080

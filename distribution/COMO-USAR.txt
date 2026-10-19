@@ -1,7 +1,7 @@
-RADAR DE LEILÕES 0.8.4 — WINDOWS 10 E 11, 64 BITS
+RADAR DE LEILÕES 0.8.5 — WINDOWS 10 E 11, 64 BITS
 
 INSTALAR
-Abra Instalar-Radar-de-Leiloes-0.8.4-Windows.exe e siga o assistente.
+Abra Instalar-Radar-de-Leiloes-0.8.5-Windows.exe e siga o assistente.
 A opção de criar um ícone na área de trabalho já vem marcada.
 Ao concluir, abra o Radar pelo ícone na área de trabalho ou no menu Iniciar.
 O Radar abre em uma janela própria. Seus dados ficam neste computador.

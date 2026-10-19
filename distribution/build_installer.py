@@ -1,7 +1,7 @@
 """Reproducible payload preparation. Run from the delivery workspace root.
 
 Inputs in work/installer-downloads: official Python 3.13.16 embed amd64 ZIP,
-XlsxWriter 3.2.9 wheel. Compile radar.iss with Inno Setup after this script.
+SQLite 3.54.1 x64 DLL and XlsxWriter 3.2.9 wheel. Compile radar.iss afterward.
 """
 import hashlib
 import json
@@ -26,8 +26,13 @@ verify_input('python.zip', EXPECTED)
 verify_input('xlsxwriter-3.2.9-py3-none-any.whl', '9a5db42bc5dff014806c58a20b9eae7322a134abb6fce3c92c181bfb275ec5b3')
 verify_input('webview2.nupkg', '56f7f4b8bf9aee4b8efefbbdd4f67d5f74ebd1b100ed0806da71bf76af481aa9')
 verify_input('MicrosoftEdgeWebview2Setup.exe', 'aa38a8cfce6179b87181609b1c730a29eaf26138fc833af5759e67576770f3a3')
+sqlite_archive=DOWNLOAD/'sqlite-dll-win-x64-3540100.zip'
+if hashlib.sha3_256(sqlite_archive.read_bytes()).hexdigest()!='c2d09c8babb9399277055c057c97a53f1ffd7c5f11d0c1f2118ffdfa39f2daa4':
+    raise ValueError('SHA3-256 divergente: SQLite 3.54.1')
 for part in ['runtime','app/defaults','app/ui','licenses']:(PAYLOAD/part).mkdir(parents=True,exist_ok=True)
 with zipfile.ZipFile(DOWNLOAD/'python.zip') as archive:archive.extractall(PAYLOAD/'runtime')
+with zipfile.ZipFile(sqlite_archive) as archive:
+    (PAYLOAD/'runtime/sqlite3.dll').write_bytes(archive.read('sqlite3.dll'))
 with zipfile.ZipFile(DOWNLOAD/'xlsxwriter-3.2.9-py3-none-any.whl') as archive:archive.extractall(PAYLOAD/'runtime/Lib/site-packages')
 with zipfile.ZipFile(DOWNLOAD/'webview2.nupkg') as archive:
     for name in ['Microsoft.Web.WebView2.Core.dll','Microsoft.Web.WebView2.WinForms.dll']:
@@ -35,6 +40,8 @@ with zipfile.ZipFile(DOWNLOAD/'webview2.nupkg') as archive:
     (PAYLOAD/'WebView2Loader.dll').write_bytes(archive.read('runtimes/win-x64/native/WebView2Loader.dll'))
     (PAYLOAD/'licenses/WebView2.txt').write_bytes(archive.read('LICENSE.txt'))
 (PAYLOAD/'runtime/python313._pth').write_text('python313.zip\n.\n../app\nLib/site-packages\n',encoding='utf-8')
+sqlite_version=subprocess.check_output([str(PAYLOAD/'runtime/python.exe'),'-c','import sqlite3;print(sqlite3.sqlite_version)'],text=True).strip()
+if sqlite_version!='3.54.1':raise RuntimeError('A compilação não carregou o SQLite corrigido.')
 for name in ['app.py','collectors.py','engine.py','friendly_ui.py','xlsx_export.py','portable_excel.py','updater.py','version.py','startup.py','notifications.py','favorite_notifications.py','favorite_changes.py']:
     shutil.copy2(SOURCE/name,PAYLOAD/'app'/name)
 shutil.copy2(DIST/'desktop.py',PAYLOAD/'app/desktop.py')
@@ -63,6 +70,7 @@ shutil.copy2(DIST/'COMO-USAR.txt',PAYLOAD/'COMO-USAR.txt')
 shutil.copy2(PAYLOAD/'runtime/LICENSE.txt',PAYLOAD/'licenses/Python.txt')
 license_file=next((PAYLOAD/'runtime/Lib/site-packages').glob('xlsxwriter-*.dist-info/LICENSE.txt'))
 shutil.copy2(license_file,PAYLOAD/'licenses/XlsxWriter.txt')
+(PAYLOAD/'licenses/SQLite.txt').write_text('SQLite 3.54.1 is in the public domain.\nhttps://sqlite.org/copyright.html\nOfficial Windows x64 binary: https://sqlite.org/2026/sqlite-dll-win-x64-3540100.zip\n',encoding='utf-8')
 (PAYLOAD/'licenses/COMPONENTES.txt').write_text('Python 3.13.16: https://www.python.org/ftp/python/3.13.16/python-3.13.16-embed-amd64.zip\nXlsxWriter 3.2.9: https://pypi.org/project/XlsxWriter/3.2.9/\nDados de cidades e estados: API pública IBGE, consulta em 02/10/2026.\nhttps://servicodados.ibge.gov.br/api/v1/localidades/municipios\n',encoding='utf-8')
 image=Image.new('RGBA',(256,256),(0,0,0,0));draw=ImageDraw.Draw(image)
 draw.rounded_rectangle((4,4,252,252),radius=52,fill='#203E60')
