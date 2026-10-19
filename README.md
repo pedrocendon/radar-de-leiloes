@@ -4,11 +4,11 @@ Programa para Windows que reúne anúncios de imóveis em leilão, acompanha alt
 
 ## Apresentação em vídeo
 
-Conheça o Radar em **2 minutos e 32 segundos**, com narração em português. Veja como configurar a busca, consultar os imóveis, abrir a planilha e acompanhar as buscas automáticas na janela do Windows.
+Conheça o **Radar 0.8.5** em cerca de **3 minutos e 20 segundos**, com narração e legendas em português. A apresentação mostra a busca, a planilha, os favoritos e os avisos de novos imóveis, queda de preço, mudança de data, suspensão e cancelamento. Veja também como agendar consultas, iniciar com o Windows e receber atualizações pelo programa.
 
-https://github.com/user-attachments/assets/a84979f8-3625-4bd6-aa5a-be02677f37dc
+https://github.com/user-attachments/assets/cc293606-4032-4a14-be34-93bd9d7b418a
 
-*Demonstração gravada em outubro de 2026. Algumas telas e recursos podem variar na versão atual; os anúncios exibidos são exemplos da gravação.*
+*Apresentação atualizada em 19 de outubro de 2026, com telas da versão 0.8.5, dados fictícios e narração sintética. Os eventos dos avisos foram simulados para demonstrar o funcionamento.*
 
 ## Versão web para várias contas
 
